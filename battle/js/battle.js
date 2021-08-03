@@ -4,14 +4,38 @@ const gridX = 24;
 const gridY = 24;
 const height = gridX * gridSize;
 const width = gridY * gridSize;
-const treeDensity = 0.15;
+const treeDensity = 0.1;
 
 // Create the canvas
+let body = document.body;
+let wrapper = document.createElement("div");
+wrapper.id = "wrapper";
+
 let canvas = document.createElement("canvas");
-let ctx = canvas.getContext("2d");
+canvas.id = "map";
 canvas.width = width;
 canvas.height = height;
-document.body.appendChild(canvas);
+let ctx = canvas.getContext("2d");
+
+let panel = document.createElement("div");
+panel.id = "panel";
+
+let title = document.createElement("h1");
+title.id = "title";
+title.innerText = "CodeChess 码棋"
+
+let detail = document.createElement("div");
+detail.id = "detail";
+
+let console = document.createElement("div");
+console.id = "console";
+
+body.appendChild(wrapper);
+wrapper.appendChild(canvas);
+wrapper.appendChild(panel);
+panel.appendChild(title);
+panel.appendChild(detail);
+detail.appendChild(console);
 
 let mapReady = false;
 let mapArray = [];
@@ -20,6 +44,16 @@ for (let i = 0; i < gridX; i++) {
     for (let j = 0; j < gridY; j++) {
         mapArray[i].push(0);
     }
+}
+
+let print = (text) => {
+    text = "<p>" + text + "</p>"
+    console.innerHTML += text;
+    console.scrollTop = console.scrollHeight;
+}
+
+let printAction = (entity, action) => {
+    print("<span class='entityName'>" + entity.name + "</span>" + action);
 }
 
 // Tree image
@@ -56,60 +90,78 @@ monsterImage.src = "images/monster.png";
 
 // Game objects
 let hero = {
-    speed: 4 * gridSize,
+    name : "鲁尼",
+    X : 0,
+    Y : 0,
 };
-let monster = {};
-let monstersCaught = 0;
+let monster = {
+    X : 0,
+    Y : 0,
+};
 
 // Handle keyboard controls
-let keysDown = {};
+let keysDown = 0;
 
 addEventListener("keydown", function (e) {
-    keysDown[e.keyCode] = true;
+    if (keysDown == 0) {
+        keysDown = e.keyCode;
+    }
 }, false);
 
 addEventListener("keyup", function (e) {
-    delete keysDown[e.keyCode];
+    keysDown = 0;
 }, false);
 
 // Reset the game when the player catches a monster
 let reset = function () {
     mapArray[3][gridY - 4] = 2;
     mapArray[gridX - 4][3] = 3;
-    hero.x = 3 * gridSize;
-    hero.y = width - 4 * gridSize;
-    monster.x = height - 4 * gridSize;
-    monster.y = 3 * gridSize;
+    hero.X = 3;
+    hero.Y = gridY - 4;
+    monster.X = gridX - 4;
+    monster.Y = 3;
 };
+
+let draw = (image, X, Y) => {
+    ctx.drawImage(image, X * gridSize, Y * gridSize);
+}
 
 // Update game objects
 let update = function (modifier) {
     let newPos = {
-        x : hero.x,
-        y : hero.y,
+        X : hero.X,
+        Y : hero.Y,
     };
-    if (38 in keysDown) { // Player holding up
-        newPos.y -= hero.speed * modifier;
+    if (38 == keysDown) { // Player holding up
+        printAction(hero, "向<span class='highlight'>前</span>走了一步")
+        newPos.Y -= 1;
     }
-    if (40 in keysDown) { // Player holding down
-        newPos.y += hero.speed * modifier;
+    if (40 == keysDown) { // Player holding down
+        printAction(hero, "向<span class='highlight'>后</span>走了一步")
+        newPos.Y += 1;
     }
-    if (37 in keysDown) { // Player holding left
-        newPos.x -= hero.speed * modifier;
+    if (37 == keysDown) { // Player holding left
+        printAction(hero, "向<span class='highlight'>左</span>走了一步")
+        newPos.X -= 1;
     }
-    if (39 in keysDown) { // Player holding right
-        newPos.x += hero.speed * modifier;
+    if (39 == keysDown) { // Player holding right
+        printAction(hero, "向<span class='highlight'>右</span>走了一步")
+        newPos.X += 1;
     }
+    keysDown = 0;
     if (checkCollision(newPos)) {
-        hero.x = newPos.x;
-        hero.y = newPos.y;
+        hero.X = newPos.X;
+        hero.Y = newPos.Y;
     }
 };
 
 let checkCollision = (pos) => {
-    let X = parseInt(Math.floor(pos.x / gridSize));
-    let Y = parseInt(Math.floor(pos.y / gridSize));
-    if (mapArray[X][Y] == 1 || mapArray[X][Y+1] == 1 || mapArray[X+1][Y] == 1 || mapArray[X+1][Y+1] == 1) {
+    let X = pos.X;
+    let Y = pos.Y;
+    if (X < 0 || X >= gridX || Y < 0 || Y >= gridY) {
+        return false;
+    }
+    if (mapArray[X][Y] == 1) {
         return false;
     }
     return true;
@@ -119,7 +171,7 @@ let generateMap = () => {
     if (grassReady) {
         for (let i = 0; i < gridX; i++) {
             for (let j = 0; j < gridY; j++) {
-                ctx.drawImage(grassImage, i * gridSize, j * gridSize);
+                draw(grassImage, i, j);
             }
         }
     }
@@ -148,9 +200,9 @@ let renderMap = () => {
         for (let i = 0; i < gridX; i++) {
             for (let j = 0; j < gridY; j++) {
                 if (mapArray[i][j] != 1) {
-                    ctx.drawImage(grassImage, i * gridSize, j * gridSize);
+                    draw(grassImage, i, j);
                 } else {
-                    ctx.drawImage(treeImage, i * gridSize, j * gridSize);
+                    draw(treeImage, i, j);
                 }
             }
         }
@@ -159,11 +211,11 @@ let renderMap = () => {
 
 let renderPlayer = () => {
     if (heroReady) {
-        ctx.drawImage(heroImage, hero.x, hero.y);
+        draw(heroImage, hero.X, hero.Y);
     }
 
     if (monsterReady) {
-        ctx.drawImage(monsterImage, monster.x, monster.y);
+        draw(monsterImage, monster.X, monster.Y);
     }
 }
 
@@ -172,10 +224,10 @@ let renderDebug = () => {
     ctx.font = "12px Helvetica";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("x: " + Math.floor(hero.x), gridSize, gridSize);
-    ctx.fillText("y: " + Math.floor(hero.y), gridSize*2.5, gridSize);
-    ctx.fillText("X: " + Math.floor(hero.x/gridSize), gridSize, gridSize*1.5);
-    ctx.fillText("Y: " + Math.floor(hero.y/gridSize), gridSize*2.5, gridSize*1.5);
+    ctx.fillText("x: " + Math.floor(hero.X * gridSize), gridSize, gridSize);
+    ctx.fillText("y: " + Math.floor(hero.Y * gridSize), gridSize*2.5, gridSize);
+    ctx.fillText("X: " + hero.X, gridSize, gridSize*1.5);
+    ctx.fillText("Y: " + hero.Y, gridSize*2.5, gridSize*1.5);
 }
 
 // Draw everything
