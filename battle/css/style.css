@@ -42,8 +42,14 @@
     color: white;
 }
 
-.entityName {
+.playerName {
     color: red;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.floorName, .wallName {
+    color: greenyellow;
     margin-left: 2px;
     margin-right: 2px;
 }

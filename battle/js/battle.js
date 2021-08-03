@@ -6,6 +6,8 @@ const height = gridX * gridSize;
 const width = gridY * gridSize;
 const treeDensity = 0.1;
 
+let objects = {};
+
 let mouseX = -1;
 let mouseY = -1;
 
@@ -27,7 +29,8 @@ canvas.onmouseleave = e => {
     mouseY = -1;
 };
 canvas.onclick = e => {
-    print(e.offsetX + " " + e.offsetY)
+    let code = mapArray[mouseX][mouseY];
+    print("这是" + "<span class="+objects[code].type+"Name"+">"+objects[code].name+"</span>")
 }
 let ctx = canvas.getContext("2d");
 
@@ -62,12 +65,12 @@ for (let i = 0; i < gridX; i++) {
 
 let print = (text) => {
     text = "<p>" + text + "</p>"
-    console.innerHTML += text;
-    console.scrollTop = console.scrollHeight;
+    logger.innerHTML += text;
+    logger.scrollTop = logger.scrollHeight;
 }
 
-let printAction = (entity, action) => {
-    print("<span class='entityName'>" + entity.name + "</span>" + action);
+let printAction = (object, action) => {
+    print("<span class="+object.type+"Name>" + object.name + "</span>" + action);
 }
 
 let x2X = (x) => {
@@ -111,12 +114,25 @@ monsterImage.onload = function () {
 monsterImage.src = "images/monster.png";
 
 // Game objects
+let grass = {
+    name: "草",
+    code: 0,
+    type: "floor",
+}
+
+let tree = {
+    name: "树",
+    code: 1,
+    type: "wall",
+}
 let hero = {
     name : "鲁尼",
     X : 0,
     Y : 0,
     hp : 50,
     totalHp : 50,
+    code: 2,
+    type: "player",
 };
 let monster = {
     name : "怪兽",
@@ -124,6 +140,8 @@ let monster = {
     Y : 0,
     hp : 100,
     totalHp: 100,
+    code: 3,
+    type: "player",
 };
 
 // Handle keyboard controls
@@ -145,6 +163,14 @@ let init = function () {
     hero.Y = gridY - 4;
     monster.X = gridX - 4;
     monster.Y = 3;
+
+    objects = {
+        [grass.code] : grass,
+        [tree.code] : tree,
+        [hero.code] : hero,
+        [monster.code] : monster,
+    }
+
     generateMap();
 };
 
@@ -251,7 +277,7 @@ let renderBlood = (player) => {
     ctx.fillRect(X2x(player.X) + gridSize * 0.05, X2x(player.Y) - gridSize * 0.3, Math.max(player.hp / player.totalHp * length, 0), gridSize * 0.18);
 }
 
-let renderEntity = () => {
+let renderPlayer = () => {
     if (heroReady) {
         drawImage(heroImage, hero.X, hero.Y);
         renderBlood(hero);
@@ -281,7 +307,7 @@ let renderMouse = () => {
 // Draw everything
 let render = function () {
     renderMap();
-    renderEntity();
+    renderPlayer();
     renderDebug();
     renderMouse();
 };
