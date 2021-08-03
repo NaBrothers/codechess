@@ -26,6 +26,9 @@ canvas.onmouseleave = e => {
     mouseX = -1;
     mouseY = -1;
 };
+canvas.onclick = e => {
+    print(e.offsetX + " " + e.offsetY)
+}
 let ctx = canvas.getContext("2d");
 
 let panel = document.createElement("div");
@@ -38,15 +41,15 @@ title.innerText = "CodeChess 码棋"
 let detail = document.createElement("div");
 detail.id = "detail";
 
-let console = document.createElement("div");
-console.id = "console";
+let logger = document.createElement("div");
+logger.id = "logger";
 
 body.appendChild(wrapper);
 wrapper.appendChild(canvas);
 wrapper.appendChild(panel);
 panel.appendChild(title);
 panel.appendChild(detail);
-detail.appendChild(console);
+detail.appendChild(logger);
 
 let mapReady = false;
 let mapArray = [];
@@ -137,11 +140,12 @@ addEventListener("keyup", function (e) {
 }, false);
 
 // Reset the game when the player catches a monster
-let reset = function () {
+let init = function () {
     hero.X = 3;
     hero.Y = gridY - 4;
     monster.X = gridX - 4;
     monster.Y = 3;
+    generateMap();
 };
 
 let drawImage = (image, X, Y) => {
@@ -184,8 +188,10 @@ let update = function (modifier) {
     }
     keysDown = 0;
     if (checkCollision(newPos)) {
+        mapArray[hero.X][hero.Y] = 0;
         hero.X = newPos.X;
         hero.Y = newPos.Y;
+        mapArray[hero.X][hero.Y] = 2;
     }
 };
 
@@ -202,42 +208,36 @@ let checkCollision = (pos) => {
 }
 
 let generateMap = () => {
-    if (grassReady) {
-        for (let i = 0; i < gridX; i++) {
-            for (let j = 0; j < gridY; j++) {
-                drawImage(grassImage, i, j);
+    for (let i = 0; i < gridX; i++) {
+        for (let j = 0; j < gridY; j++) {
+            mapArray[i][j] = 0;
+        }
+    }
+
+    for (let i = 0; i < gridX; i++) {
+        for (let j = 0; j < gridY; j++) {
+            if (i == 0 || j == 0 || i == gridX - 1 || j == gridY - 1) {
+                mapArray[i][j] = 1;
+            } else if (mapArray[i][j] == 0 && Math.random() < treeDensity) {
+                mapArray[i][j] = 1;
             }
         }
     }
 
-    if (treeReady) {
-        for (let i = 0; i < gridX; i++) {
-            for (let j = 0; j < gridY; j++) {
-                if (i == 0 || j == 0 || i == gridX - 1 || j == gridY - 1) {
-                    mapArray[i][j] = 1;
-                } else if (mapArray[i][j] == 0 && Math.random() < treeDensity) {
-                    mapArray[i][j] = 1;
-                }
-            }
-        }
-    }
-
-    if (grassReady && treeReady) {
-        mapReady = true;
-    }
+    mapArray[hero.X][hero.Y] = 2;
+    mapArray[monster.X][monster.Y] = 3;
 }
 
 let renderMap = () => {
-    if (!mapReady) {
-        generateMap();
-    } else {
-        for (let i = 0; i < gridX; i++) {
-            for (let j = 0; j < gridY; j++) {
-                if (mapArray[i][j] != 1) {
-                    drawImage(grassImage, i, j);
-                } else {
-                    drawImage(treeImage, i, j);
-                }
+    if (!grassReady || !treeReady) {
+        return;
+    }
+    for (let i = 0; i < gridX; i++) {
+        for (let j = 0; j < gridY; j++) {
+            if (mapArray[i][j] != 1) {
+                drawImage(grassImage, i, j);
+            } else if (mapArray[i][j] == 1) {
+                drawImage(treeImage, i, j);
             }
         }
     }
@@ -306,5 +306,5 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 
 // Let's play this game!
 let then = Date.now();
-reset();
+init();
 main();
