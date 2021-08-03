@@ -172,8 +172,10 @@ let renderDebug = () => {
     ctx.font = "12px Helvetica";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("X: " + Math.round(hero.x), gridSize, gridSize);
-    ctx.fillText("Y: " + Math.round(hero.y), gridSize, gridSize * 1.5);
+    ctx.fillText("x: " + Math.floor(hero.x), gridSize, gridSize);
+    ctx.fillText("y: " + Math.floor(hero.y), gridSize*2.5, gridSize);
+    ctx.fillText("X: " + Math.floor(hero.x/gridSize), gridSize, gridSize*1.5);
+    ctx.fillText("Y: " + Math.floor(hero.y/gridSize), gridSize*2.5, gridSize*1.5);
 }
 
 // Draw everything
