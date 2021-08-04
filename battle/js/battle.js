@@ -30,16 +30,12 @@ canvas.onmouseleave = e => {
 };
 canvas.onclick = e => {
     let code = mapArray[mouseX][mouseY];
-    print("这是" + "<span class="+objects[code].type+"Name"+">"+objects[code].name+"</span>")
+    showDetail(objects[code]);
 }
 let ctx = canvas.getContext("2d");
 
 let panel = document.createElement("div");
 panel.id = "panel";
-
-let title = document.createElement("h1");
-title.id = "title";
-title.innerText = "CodeChess 码棋"
 
 let detail = document.createElement("div");
 detail.id = "detail";
@@ -50,9 +46,8 @@ logger.id = "logger";
 body.appendChild(wrapper);
 wrapper.appendChild(canvas);
 wrapper.appendChild(panel);
-panel.appendChild(title);
 panel.appendChild(detail);
-detail.appendChild(logger);
+panel.appendChild(logger);
 
 let mapReady = false;
 let mapArray = [];
@@ -81,49 +76,34 @@ let X2x = (X) => {
     return X * gridSize;
 }
 
-// Tree image
-let treeReady = false;
-let treeImage = new Image();
-treeImage.onload = function () {
-    treeReady = true;
-};
-treeImage.src = "images/tree.png";
+let showDetail = (object) => {
+    detail.innerHTML = "";
+    detail.appendChild(object.image);
+    detail.innerHTML += "<span style='margin: 5px'>" + object.name + "</span st>";
+}
 
-// Grass image
-let grassReady = false;
-let grassImage = new Image();
-grassImage.onload = function () {
-    grassReady = true;
-};
-grassImage.src = "images/grass.png";
+let initImage = (path) => {
+    let image = new Image();
+    image.onload = () => {
 
-// Hero image
-let heroReady = false;
-let heroImage = new Image();
-heroImage.onload = function () {
-    heroReady = true;
-};
-heroImage.src = "images/hero.png";
-
-// Monster image
-let monsterReady = false;
-let monsterImage = new Image();
-monsterImage.onload = function () {
-    monsterReady = true;
-};
-monsterImage.src = "images/monster.png";
+    }
+    image.src = path;
+    return image;
+}
 
 // Game objects
 let grass = {
     name: "草",
     code: 0,
     type: "floor",
+    image: initImage("images/grass.png"),
 }
 
 let tree = {
     name: "树",
     code: 1,
     type: "wall",
+    image: initImage("images/tree.png"),
 }
 let hero = {
     name : "鲁尼",
@@ -133,6 +113,7 @@ let hero = {
     totalHp : 50,
     code: 2,
     type: "player",
+    image: initImage("images/hero.png"),
 };
 let monster = {
     name : "怪兽",
@@ -142,6 +123,7 @@ let monster = {
     totalHp: 100,
     code: 3,
     type: "player",
+    image: initImage("images/monster.png"),
 };
 
 // Handle keyboard controls
@@ -189,13 +171,6 @@ let update = function (modifier) {
         X : hero.X,
         Y : hero.Y,
     };
-    if (keysDown != 0) {
-        hero.hp -= 1;
-        if (hero.hp <= 0) {
-            printAction(hero, "<span class='highlight'>死了</span>")
-            return;
-        }
-    }
     if (38 == keysDown) { // Player holding up
         printAction(hero, "向<span class='highlight'>前</span>走了一步")
         newPos.Y -= 1;
@@ -255,15 +230,11 @@ let generateMap = () => {
 }
 
 let renderMap = () => {
-    if (!grassReady || !treeReady) {
-        return;
-    }
     for (let i = 0; i < gridX; i++) {
         for (let j = 0; j < gridY; j++) {
-            if (mapArray[i][j] != 1) {
-                drawImage(grassImage, i, j);
-            } else if (mapArray[i][j] == 1) {
-                drawImage(treeImage, i, j);
+            drawImage(grass.image, i, j);
+            if (mapArray[i][j] == 1) {
+                drawImage(tree.image, i, j);
             }
         }
     }
@@ -278,26 +249,22 @@ let renderBlood = (player) => {
 }
 
 let renderPlayer = () => {
-    if (heroReady) {
-        drawImage(heroImage, hero.X, hero.Y);
-        renderBlood(hero);
-    }
+    drawImage(hero.image, hero.X, hero.Y);
+    renderBlood(hero);
 
-    if (monsterReady) {
-        drawImage(monsterImage, monster.X, monster.Y);
-        renderBlood(monster);
-    }
+    drawImage(monster.image, monster.X, monster.Y);
+    renderBlood(monster);
 }
 
 let renderDebug = () => {
     ctx.fillStyle = "rgb(250, 250, 250)";
-    ctx.font = "12px Helvetica";
+    ctx.font = gridSize*0.4 + "px Helvetica";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText("x: " + X2x(hero.X), gridSize, gridSize);
-    ctx.fillText("y: " + X2x(hero.Y), gridSize*2.5, gridSize);
+    ctx.fillText("y: " + X2x(hero.Y), gridSize*2.2, gridSize);
     ctx.fillText("X: " + hero.X, gridSize, gridSize*1.5);
-    ctx.fillText("Y: " + hero.Y, gridSize*2.5, gridSize*1.5);
+    ctx.fillText("Y: " + hero.Y, gridSize*2.2, gridSize*1.5);
 }
 
 let renderMouse = () => {
