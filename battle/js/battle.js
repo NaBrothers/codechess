@@ -5,6 +5,9 @@ const gridY = 24;
 const height = gridX * gridSize;
 const width = gridY * gridSize;
 const treeDensity = 0.1;
+const frame = 30;
+const fps = 30;
+const fpsInterval = 1000 / fps;
 
 let objects = {};
 
@@ -29,8 +32,8 @@ canvas.onmouseleave = e => {
     mouseY = -1;
 };
 canvas.onclick = e => {
-    let code = mapArray[mouseX][mouseY];
-    showDetail(objects[code]);
+    let id = mapArray[mouseX][mouseY];
+    showDetail(objects[id]);
 }
 let ctx = canvas.getContext("2d");
 
@@ -49,7 +52,6 @@ wrapper.appendChild(panel);
 panel.appendChild(detail);
 panel.appendChild(logger);
 
-let mapReady = false;
 let mapArray = [];
 for (let i = 0; i < gridX; i++) {
     mapArray.push([]);
@@ -78,6 +80,7 @@ let X2x = (X) => {
 
 let showDetail = (object) => {
     detail.innerHTML = "";
+    object.image.style="width:50px;height:50px";
     detail.appendChild(object.image);
     detail.innerHTML += "<span style='margin: 5px'>" + object.name + "</span st>";
 }
@@ -91,17 +94,19 @@ let initImage = (path) => {
     return image;
 }
 
+let gif = initImage("images/attack.png")
+
 // Game objects
 let grass = {
     name: "草",
-    code: 0,
+    id: 0,
     type: "floor",
     image: initImage("images/grass.png"),
 }
 
 let tree = {
     name: "树",
-    code: 1,
+    id: 1,
     type: "wall",
     image: initImage("images/tree.png"),
 }
@@ -111,7 +116,7 @@ let hero = {
     Y : 0,
     hp : 50,
     totalHp : 50,
-    code: 2,
+    id: 2,
     type: "player",
     image: initImage("images/hero.png"),
 };
@@ -121,7 +126,7 @@ let monster = {
     Y : 0,
     hp : 100,
     totalHp: 100,
-    code: 3,
+    id: 3,
     type: "player",
     image: initImage("images/monster.png"),
 };
@@ -147,22 +152,37 @@ let init = function () {
     monster.Y = 3;
 
     objects = {
-        [grass.code] : grass,
-        [tree.code] : tree,
-        [hero.code] : hero,
-        [monster.code] : monster,
+        [grass.id] : grass,
+        [tree.id] : tree,
+        [hero.id] : hero,
+        [monster.id] : monster,
     }
 
     generateMap();
 };
 
 let drawImage = (image, X, Y) => {
-    ctx.drawImage(image, X2x(X), X2x(Y));
+    ctx.drawImage(image, X2x(X), X2x(Y), gridSize, gridSize);
 }
 
 let drawFill = (color, X, Y) => {
     ctx.fillStyle = color;
     ctx.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
+}
+
+let drawGif = (image, X, Y, frames, repeat) => {
+    if (image.frame == undefined) {
+        image.frame = 0;
+    }
+    if (image.frame < frames) {
+        let sx = (image.frame % 5) * gridSize;
+        let sy = Math.floor(image.frame / 5) * gridSize;
+        ctx.drawImage(image, sx, sy, gridSize, gridSize, X2x(X), X2x(Y), gridSize, gridSize);
+        image.frame++;
+    }
+    if (image.frame == frames && repeat) {
+        image.frame = 0;
+    }
 }
 
 // Update game objects
@@ -265,6 +285,7 @@ let renderDebug = () => {
     ctx.fillText("y: " + X2x(hero.Y), gridSize*2.2, gridSize);
     ctx.fillText("X: " + hero.X, gridSize, gridSize*1.5);
     ctx.fillText("Y: " + hero.Y, gridSize*2.2, gridSize*1.5);
+    ctx.fillText("Frame: " + currentFrame, gridSize, gridSize*2);
 }
 
 let renderMouse = () => {
@@ -277,18 +298,24 @@ let render = function () {
     renderPlayer();
     renderDebug();
     renderMouse();
+    drawGif(gif, 8, 12, 15, true)
 };
+
+let currentFrame = 0;
 
 // The main game loop
 let main = function () {
     let now = Date.now();
     let delta = now - then;
-
-    update(delta / 1000);
-    render();
-
-    then = now;
-
+    if (delta > fpsInterval) {
+        update(fpsInterval);
+        render();
+        then = now - delta % fpsInterval;
+        currentFrame++;
+        if (currentFrame == frame) {
+            currentFrame = 0;
+        }
+    }
     // Request to do this again ASAP
     requestAnimationFrame(main);
 };
