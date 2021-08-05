@@ -8,9 +8,12 @@ const treeDensity = 0.1;
 const frame = 30;
 const fps = 30;
 const fpsInterval = 1000 / fps;
+const isDebug = true;
 
 let objects = {};
 
+let mousex = -1;
+let mousey = -1;
 let mouseX = -1;
 let mouseY = -1;
 
@@ -24,10 +27,14 @@ canvas.id = "map";
 canvas.width = width;
 canvas.height = height;
 canvas.onmousemove = e => {
-      mouseX = x2X(e.offsetX);
-      mouseY = x2X(e.offsetY);
+    mousex = e.offsetX;
+    mousey = e.offsetY;
+    mouseX = x2X(e.offsetX);
+    mouseY = x2X(e.offsetY);
 };
 canvas.onmouseleave = e => {
+    mousex = -1;
+    mousey = -1;
     mouseX = -1;
     mouseY = -1;
 };
@@ -66,6 +73,12 @@ let print = (text) => {
     logger.scrollTop = logger.scrollHeight;
 }
 
+let debug = (text) => {
+    if (isDebug) {
+        print("<span class='debugText'>" + "[调试] " + text + "</span>");
+    }
+}
+
 let printAction = (object, action) => {
     print("<span class="+object.type+"Name>" + object.name + "</span>" + action);
 }
@@ -88,13 +101,13 @@ let showDetail = (object) => {
 let initImage = (path) => {
     let image = new Image();
     image.onload = () => {
-
+        debug(path + " 加载成功")
     }
     image.src = path;
     return image;
 }
 
-let gif = initImage("images/attack.png")
+let gif = initImage("images/attack2.png")
 
 // Game objects
 let grass = {
@@ -277,15 +290,19 @@ let renderPlayer = () => {
 }
 
 let renderDebug = () => {
+    if (!isDebug) {
+        return;
+    }
     ctx.fillStyle = "rgb(250, 250, 250)";
-    ctx.font = gridSize*0.4 + "px Helvetica";
+    ctx.font = 32*0.4 + "px Helvetica";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("x: " + X2x(hero.X), gridSize, gridSize);
-    ctx.fillText("y: " + X2x(hero.Y), gridSize*2.2, gridSize);
-    ctx.fillText("X: " + hero.X, gridSize, gridSize*1.5);
-    ctx.fillText("Y: " + hero.Y, gridSize*2.2, gridSize*1.5);
-    ctx.fillText("Frame: " + currentFrame, gridSize, gridSize*2);
+    ctx.fillText("x: " + mousex, 32, 32);
+    ctx.fillText("y: " + mousey, 32*2.2, 32);
+    ctx.fillText("X: " + mouseX, 32, 32*1.5);
+    ctx.fillText("Y: " + mouseY, 32*2.2, 32*1.5);
+    ctx.fillText("Step: " + step, 32, 32*2);
+    ctx.fillText("Frame: " + currentFrame, 32, 32*2.5);
 }
 
 let renderMouse = () => {
@@ -298,10 +315,11 @@ let render = function () {
     renderPlayer();
     renderDebug();
     renderMouse();
-    drawGif(gif, 8, 12, 15, true)
+    drawGif(gif, 5, 5, frame, true)
 };
 
 let currentFrame = 0;
+let step = 0;
 
 // The main game loop
 let main = function () {
@@ -314,6 +332,7 @@ let main = function () {
         currentFrame++;
         if (currentFrame == frame) {
             currentFrame = 0;
+            step++;
         }
     }
     // Request to do this again ASAP
