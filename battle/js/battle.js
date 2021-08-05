@@ -41,6 +41,8 @@ canvas.onmouseleave = e => {
 canvas.onclick = e => {
     let id = mapArray[mouseX][mouseY];
     showDetail(objects[id]);
+    let effect = new Attack(mouseX, mouseY);
+    Effect.cast(effect);
 }
 let ctx = canvas.getContext("2d");
 
@@ -101,13 +103,11 @@ let showDetail = (object) => {
 let initImage = (path) => {
     let image = new Image();
     image.onload = () => {
-        debug(path + " 加载成功")
+
     }
     image.src = path;
     return image;
 }
-
-let gif = initImage("images/attack2.png")
 
 // Game objects
 let grass = {
@@ -143,6 +143,66 @@ let monster = {
     type: "player",
     image: initImage("images/monster.png"),
 };
+
+class Effect {
+    constructor(name, path, frames, size, duration) {
+        this.id = 4;
+        this.type = "effect";
+        this.X = 0;
+        this.Y = 0;
+
+        this.name = name;
+        this.image = initImage(path);
+        this.frames = frames;
+        this.size = size;
+        this.duration = duration;
+
+        this.status = 0;
+        this.seq = 0;
+    }
+
+    static effectMap = {};
+
+    static effectId = 0;
+
+    static cast(e) {
+        this.effectMap[this.effectId] = e;
+        e.seq = this.effectId++;
+    }
+
+    static render() {
+        for (let id in this.effectMap) {
+            let e = this.effectMap[id];
+            e.draw();
+        }
+    }
+
+    draw() {
+        if (this.status == 0) {
+            printAction(hero,"释放技能" + "<span class='highlight'>" + this.name + "</span>");
+            this.status = 1;
+        }
+        if (this.status == 1 && this.image.finished) {
+            this.status = 2;
+            printAction(hero,"结束" + "<span class='highlight'>" + this.name + "</span>");
+            delete Effect.effectMap[this.seq];
+        }
+    }
+};
+
+class Attack extends Effect {
+    constructor(X, Y) {
+        super("攻击", "images/attack.png", 15, 32, 15);
+        this.X = X;
+        this.Y = Y;
+    }
+
+    draw() {
+        super.draw();
+        drawGif(this.image, this.X, this.Y, this.frames, this.size, this.duration,1);
+    }
+}
+
 
 // Handle keyboard controls
 let keysDown = 0;
@@ -183,18 +243,37 @@ let drawFill = (color, X, Y) => {
     ctx.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
 }
 
-let drawGif = (image, X, Y, frames, repeat) => {
+/**
+ * 绘制gif图片
+ * @param image gif对象
+ * @param X 方块X轴
+ * @param Y 方块Y轴
+ * @param frames gif包含的帧数
+ * @param size gif图片的边长
+ * @param duration 渲染的帧数
+ * @param count 执行次数（-1无限循环）
+ */
+let drawGif = (image, X, Y, frames, size, duration = frame, count = 1) => {
     if (image.frame == undefined) {
         image.frame = 0;
+        image.count = count;
+        image.finished = false;
     }
-    if (image.frame < frames) {
-        let sx = (image.frame % 5) * gridSize;
-        let sy = Math.floor(image.frame / 5) * gridSize;
-        ctx.drawImage(image, sx, sy, gridSize, gridSize, X2x(X), X2x(Y), gridSize, gridSize);
-        image.frame++;
+    if (image.finished) return;
+    let delta = frames/duration;
+    if (image.frame < duration) {
+        let count = image.width / size;
+        let sx = (Math.floor(image.frame) % count) * size;
+        let sy = Math.floor(Math.floor(image.frame) / count) * size;
+        ctx.drawImage(image, sx, sy, size, size, X2x(X), X2x(Y), gridSize, gridSize);
+        image.frame += delta;
     }
-    if (image.frame == frames && repeat) {
+    if (image.frame >= duration && image.count != 0) {
         image.frame = 0;
+        image.count--;
+    }
+    if (image.count == 0) {
+        image.finished = true;
     }
 }
 
@@ -309,13 +388,17 @@ let renderMouse = () => {
     drawFill("rgb(255,183,0,0.4)", mouseX, mouseY);
 }
 
+let renderEffect = () => {
+    Effect.render();
+}
+
 // Draw everything
 let render = function () {
     renderMap();
     renderPlayer();
     renderDebug();
     renderMouse();
-    drawGif(gif, 5, 5, frame, true)
+    renderEffect();
 };
 
 let currentFrame = 0;
