@@ -1,18 +1,23 @@
 package com.nabrothers.codechess.core.bootstrap;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.webapp.WebAppContext;
+
+import java.io.File;
+import java.nio.file.Path;
 
 public class JettyServer {
-    private static final int HTTP_PORT = 8080;
+    private static final int HTTP_PORT = 8081;
+
+    public static final String CONTEXT = "/";
+
+    private static final String DEFAULT_WEBAPP_PATH = "codechess/codechess-core/src/main/webapp";
+
+    private static final String WEB_XML_PATH = "codechess/codechess-code/src/main/webapp/WEB-INF/web.xml";
 
     private static final Logger logger = LogManager.getLogger(JettyServer.class);
 
@@ -23,30 +28,33 @@ public class JettyServer {
     }
 
     private Server createServer() {
-        // Create and configure a ThreadPool.
-        QueuedThreadPool threadPool = new QueuedThreadPool();
-        threadPool.setName("server");
-
         // Create a Server instance.
-        Server server = new Server(threadPool);
+        Server server = new Server();
+
+        // Create and configure a ThreadPool.
+        QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
+        queuedThreadPool.setName("queuedTreadPool");
+        queuedThreadPool.setMinThreads(10);
+        queuedThreadPool.setMaxThreads(200);
+        server.setThreadPool(queuedThreadPool);
 
         // Create a ServerConnector to accept connections from clients.
-        Connector connector = new ServerConnector(server);
-
-        // Add the Connector to the Server
+        SelectChannelConnector connector = new SelectChannelConnector();
+        connector.setPort(HTTP_PORT);
+        connector.setAcceptors(4);// 同时监听read事件的线程数
+        connector.setMaxBuffers(2048);
+        connector.setMaxIdleTime(10000);
+        server.addConnector(connector);
         server.addConnector(connector);
 
-        // Set a simple Handler to handle requests/responses.
-        server.setHandler(new AbstractHandler()
-        {
-            @Override
-            public void handle(String target, Request jettyRequest, HttpServletRequest request, HttpServletResponse response)
-            {
-                // Mark the request as handled so that it
-                // will not be processed by other handlers.
-                jettyRequest.setHandled(true);
-            }
-        });
+        Path defaultPath = new File(DEFAULT_WEBAPP_PATH).toPath();
+        Path webXmlPath = new File(WEB_XML_PATH).toPath();
+
+        WebAppContext webContext = new WebAppContext(DEFAULT_WEBAPP_PATH, CONTEXT);
+        webContext.setResourceBase(defaultPath.toAbsolutePath().toString());
+        webContext.setDescriptor(webXmlPath.toAbsolutePath().toString());
+        webContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+        server.setHandler(webContext);
 
         return server;
     }
