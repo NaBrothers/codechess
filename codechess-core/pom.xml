@@ -97,7 +97,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/src/main/webapp</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/webapp</directory>
