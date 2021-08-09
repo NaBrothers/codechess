@@ -61,10 +61,8 @@ export class Object {
 }
 
 class Effect extends Object {
-    constructor(name, path, frames, size=gridSize, duration) {
+    constructor(name, path, size=gridSize) {
         super(name, path, size);
-        this.frames = frames;
-        this.duration = duration;
         this.status = 0;
     }
 
@@ -84,8 +82,10 @@ class Effect extends Object {
 }
 
 export class Attack extends Effect {
-    constructor(X, Y) {
-        super("攻击", "images/attack.png", 15, 32, 15);
+    constructor(name, path, size=gridSize, X, Y, frames, duration) {
+        super(name, path, 32);
+        this.frames = frames;
+        this.duration = duration;
         this.X = X;
         this.Y = Y;
     }
@@ -93,6 +93,24 @@ export class Attack extends Effect {
     draw() {
         super.draw();
         utils.drawGif(this.image, this.X, this.Y, this.frames, this.size, this.duration,1);
+    }
+}
+
+export class Flyer extends Effect {
+    // speed unit: pixel per frame
+    constructor(name, path, size=gridSize, X, Y, vector_x, vector_y, speed) {
+        super(name, path, size);
+        this.x = utils.X2x(X);
+        this.y = utils.X2x(Y);
+        this.vector = {};
+        this.vector.x = vector_x;
+        this.vector.y = vector_y;
+        this.speed = speed;
+    }
+
+    draw() {
+        super.draw();
+        utils.drawFlyer(this);
     }
 }
 

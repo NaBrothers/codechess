@@ -20,8 +20,13 @@ export function initImage(path) {
     return image;
 }
 
-export function drawImage(image, X, Y) {
-    ctx.drawImage(image, X2x(X), X2x(Y), gridSize, gridSize);
+export function drawImage(image, X, Y, degree=0) {
+    ctx.save();
+    ctx.translate(X2x(X)+gridSize/2, X2x(Y)+gridSize/2);
+    ctx.rotate(degree);
+    ctx.translate(-gridSize/2, -gridSize/2);
+    ctx.drawImage(image, 0, 0, gridSize, gridSize);
+    ctx.restore();
 }
 
 export function drawFill(color, X, Y) {
@@ -50,6 +55,28 @@ export function drawGif(image, X, Y, frames, size, duration = frame, count = 1) 
     }
     if (image.count == 0) {
         image.finished = true;
+    }
+}
+
+export function drawFlyer(flyer) {
+    if (flyer.image.finished == undefined){
+        flyer.image.finished = false;
+        flyer.count = 0;
+    } else if (flyer.image.finished == true) return;
+    flyer.x += flyer.vector.x * flyer.speed;
+    flyer.y += flyer.vector.y * flyer.speed;
+    let degree;
+    if (flyer.vector.x >= 0)
+        degree = Math.asin(flyer.vector.y);
+    else
+        degree = Math.PI - Math.asin(flyer.vector.y);
+    if (flyer.count < 50 && !flyer.image.finished){
+        drawImage(flyer.image, flyer.x/gridSize, flyer.y/gridSize, degree);
+        flyer.count++;
+    } else {
+        flyer.image.finished = true;
+        let ack = new objects.Attack("击中", "images/attack.png", gridSize, x2X(flyer.x), x2X(flyer.y), 15, 15);
+        objects.Attack.register(ack);
     }
 }
 
@@ -142,9 +169,13 @@ function initCanvas(width, height) {
         mouseX = -1;
         mouseY = -1;
     };
+    // canvas.onclick = e => {
+    //     let atk = new objects.Attack("攻击", "images/attack.png", gridSize, mouseX, mouseY, 15, 15);
+    //     objects.Attack.register(atk);
+    // }
     canvas.onclick = e => {
-        let atk = new objects.Attack(mouseX, mouseY);
-        objects.Attack.register(atk);
+        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, mouseX, mouseY, 0.707, 0.707, 2);
+        objects.Flyer.register(flyer);
     }
 }
 
