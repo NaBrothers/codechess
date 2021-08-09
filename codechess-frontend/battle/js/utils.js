@@ -174,7 +174,8 @@ function initCanvas(width, height) {
     //     objects.Attack.register(atk);
     // }
     canvas.onclick = e => {
-        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, mouseX, mouseY, 0.707, 0.707, 2);
+        let degree = Math.PI * 2 * Math.random();
+        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
         objects.Flyer.register(flyer);
     }
 }
