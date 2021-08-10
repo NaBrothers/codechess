@@ -18,16 +18,18 @@ const treeImgPath = "images/tree.png";
 const heroImgPath = "images/hero.png";
 
 
-for (var i = 0; i < gridX; i++){
-    for (var j = 0; j < gridY; j++){
-        let grass = new objects.Floor("草", grassImgPath, gridSize, i, j);
-        objects.Floor.register(grass);
-        if (i == 0||i == gridX-1||j == 0||j == gridY-1){
-            let tree = new objects.Wall("树", treeImgPath, gridSize, i, j);
-            objects.Wall.register(tree);
-        }
-    }
-}
+// for (var i = 0; i < gridX; i++){
+//     for (var j = 0; j < gridY; j++){
+//         let grass = new objects.Floor("草", grassImgPath, gridSize, i, j);
+//         objects.Floor.register(grass);
+//         if (i == 0||i == gridX-1||j == 0||j == gridY-1){
+//             let tree = new objects.Wall("树", treeImgPath, gridSize, i, j);
+//             objects.Wall.register(tree);
+//         }
+//     }
+// }
+
+utils.initMap(gridX, gridY, gridSize, treeDensity);
 
 let hero = new objects.Player("鲁尼", heroImgPath, gridSize, 3, 3, 100, 50);
 objects.Player.register(hero);
@@ -44,6 +46,8 @@ let main = function () {
     let delta = now - then;
     if (delta > fpsInterval) {
         objects.Object.render();
+        utils.renderDebug(currentFrame, step);
+        utils.renderMouse();
         then = now - delta % fpsInterval;
         currentFrame++;
         if (currentFrame == frame) {

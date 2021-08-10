@@ -10,6 +10,8 @@ const frame = 30;
 const fps = 30;
 const fpsInterval = 1000 / fps;
 const isDebug = true;
+const grassImgPath = "images/grass.png";
+const treeImgPath = "images/tree.png";
 
 export function initImage(path) {
     let image = new Image();
@@ -111,6 +113,19 @@ function debug(text) {
     }
 }
 
+export function initMap(gridX, gridY, gridSize, treeDensity) {
+    for (var i = 0; i < gridX; i++){
+        for (var j = 0; j < gridY; j++){
+            let grass = new objects.Floor("草", grassImgPath, gridSize, i, j);
+            objects.Floor.register(grass);
+            if (i == 0||i == gridX-1||j == 0||j == gridY-1||Math.random() < treeDensity){
+                let tree = new objects.Wall("树", treeImgPath, gridSize, i, j);
+                objects.Wall.register(tree);
+            }
+        }
+    }
+}
+
 var isInit = false;
 
 export function init() {
@@ -196,7 +211,22 @@ function initPanel() {
     panel.appendChild(logger);
 }
 
+export function renderDebug(currentFrame, step) {
+    if (!isDebug) {
+        return;
+    }
+    ctx.fillStyle = "rgb(250, 250, 250)";
+    ctx.font = 32*0.4 + "px Helvetica";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("x: " + mousex, 32, 32);
+    ctx.fillText("y: " + mousey, 32*2.2, 32);
+    ctx.fillText("X: " + mouseX, 32, 32*1.5);
+    ctx.fillText("Y: " + mouseY, 32*2.2, 32*1.5);
+    ctx.fillText("Step: " + step, 32, 32*2);
+    ctx.fillText("Frame: " + currentFrame, 32, 32*2.5);
+}
 
-// export function setCanvasOnClickListener(func) {
-//     canvas.onclick = func();
-// }
+export function renderMouse() {
+    drawFill("rgb(255,183,0,0.4)", mouseX, mouseY);
+}
