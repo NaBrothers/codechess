@@ -31,6 +31,8 @@ export class Object {
 
     static layerIndex = -1;
 
+    static maxGettableLayer = 3;
+
     static register(o) {
         o.seq = Object.currentSeq++;
         if (!(this.layerIndex in this.objectMap)){
@@ -55,6 +57,21 @@ export class Object {
                 }
             }
         }
+    }
+
+    static getObject(X, Y) {
+        let currentObject;
+
+        for (let layer in this.objectMap) {
+            if (layer > this.maxGettableLayer) break;
+            for (let seq in this.objectMap[layer]) {
+                let tmpObject = this.objectMap[layer][seq];
+                if (tmpObject.X == X && tmpObject.Y == Y)
+                    currentObject = tmpObject;
+            }
+        }
+
+        return currentObject;
     }
 
     draw() {}

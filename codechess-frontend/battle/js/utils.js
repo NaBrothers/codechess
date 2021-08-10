@@ -92,7 +92,8 @@ export function drawBlood(player) {
 
 export function showDetail(object) {
     detail.innerHTML = "";
-    object.image.style="width:50px;height:50px";
+    // object.image.style="width:50px;height:50px";
+    object.image.draggable="true";
     detail.appendChild(object.image);
     detail.innerHTML += "<span style='margin: 5px'>" + object.name + "</span st>";
 }
@@ -192,6 +193,7 @@ function initCanvas(width, height) {
         let degree = Math.PI * 2 * Math.random();
         let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
         objects.Flyer.register(flyer);
+        showDetail(objects.Object.getObject(mouseX, mouseY));
     }
 }
 
