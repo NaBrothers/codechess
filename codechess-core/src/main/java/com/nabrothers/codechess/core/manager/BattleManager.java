@@ -1,8 +1,7 @@
 package com.nabrothers.codechess.core.manager;
 
-import com.nabrothers.codechess.core.data.BattleContext;
-import com.nabrothers.codechess.core.enums.BattleStatus;
-import com.nabrothers.codechess.core.po.BattleRecordPO;
+import com.nabrothers.codechess.core.context.BattleContext;
+import com.nabrothers.codechess.core.context.Context;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -17,12 +16,12 @@ public class BattleManager {
 
     private AtomicInteger threadNumber = new AtomicInteger(0);
 
-    private ExecutorService battleExecutor = new ThreadPoolExecutor(32, 128, 30, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(512), r -> new Thread(r, "BattleContextThread-" + threadNumber.getAndIncrement()));
+    private ExecutorService battleExecutor = new ThreadPoolExecutor(0, 128, 60, TimeUnit.SECONDS,
+            new SynchronousQueue<>(), r -> new Thread(r, "BattleContextThread-" + threadNumber.getAndIncrement()));
 
-    private ConcurrentMap<Integer, BattleContext> contextMap = new ConcurrentHashMap();
+    private ConcurrentMap<Integer, Context> contextMap = new ConcurrentHashMap();
 
-    public BattleContext getContext(Integer id) {
+    public Context getContext(Integer id) {
         return contextMap.get(id);
     }
 
@@ -32,7 +31,7 @@ public class BattleManager {
             return false;
         }
         try {
-            BattleContext context = new BattleContext(id);
+            Context context = new BattleContext(id);
             contextMap.put(id, context);
             battleExecutor.submit(() -> {
                 context.start();

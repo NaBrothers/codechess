@@ -1,7 +1,5 @@
 package com.nabrothers.codechess.core.controller;
 
-import com.nabrothers.codechess.core.data.BattleContext;
-import com.nabrothers.codechess.core.dto.BattleContextDTO;
 import com.nabrothers.codechess.core.dto.BattleResultDTO;
 import com.nabrothers.codechess.core.dto.BattleProcessDTO;
 import com.nabrothers.codechess.core.dto.BattleStartDTO;
