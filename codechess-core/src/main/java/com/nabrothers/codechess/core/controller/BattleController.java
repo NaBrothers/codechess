@@ -21,7 +21,8 @@ public class BattleController {
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     @ResponseBody
     public Integer start() {
-        return 0;
+        int id = battleContextService.startBattle();
+        return id;
     }
 
     @RequestMapping(value = "/process", method = RequestMethod.GET)

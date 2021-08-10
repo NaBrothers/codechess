@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nabrothers.codechess.core.dao.BattleRecordDAO">
+    <insert id="insert" parameterType="com.nabrothers.codechess.core.po.BattleRecordPO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        `BattleRecord`
+        (
+         `status`,
+         `createTime`
+         )
+        VALUES
+        (
+         #{status},
+         NOW()
+        )
+    </insert>
+</mapper>
