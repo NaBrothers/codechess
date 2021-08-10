@@ -2,25 +2,34 @@ package com.nabrothers.codechess.core.data;
 
 
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
-import com.nabrothers.codechess.core.dto.InitBattleDTO;
-import org.springframework.stereotype.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class BattleContext {
+    private int id;
+
     private int currentStep;
 
     private int status;
 
+    private Logger logger = LogManager.getLogger(BattleContext.class);
+
     private List<BattleContextDTO> history = new ArrayList<>();
 
-    //Mock
-    {
-        BattleContextDTO b1 = new BattleContextDTO();
-        b1.setStep(0);
-        history.add(b1);
+    public BattleContext(int id) {
+        this.id = id;
+    }
+
+    public void start() {
+        logger.info("[" + id + "] 已启动", id);
+        doStart();
+    }
+
+    private void doStart() {
+
     }
 
     private void snapshot() {

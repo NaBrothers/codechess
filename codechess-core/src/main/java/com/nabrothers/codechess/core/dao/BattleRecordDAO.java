@@ -5,5 +5,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface BattleRecordDAO {
-    int insert(BattleRecordPO record);
+    long insert(BattleRecordPO record);
+
+    BattleRecordPO queryById(Integer id);
+
+    long update(BattleRecordPO record);
 }

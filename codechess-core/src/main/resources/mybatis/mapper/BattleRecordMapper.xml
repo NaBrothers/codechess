@@ -7,12 +7,33 @@
         `BattleRecord`
         (
          `status`,
-         `createTime`
+         `createTime`,
+         `result`
          )
         VALUES
         (
          #{status},
-         NOW()
+         NOW(),
+         #{result}
         )
     </insert>
+    
+    <select id="queryById" parameterType="java.lang.Integer" resultType="com.nabrothers.codechess.core.po.BattleRecordPO">
+        SELECT * FROM
+        `BattleRecord`
+        WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.nabrothers.codechess.core.po.BattleRecordPO">
+        UPDATE `BattleRecord` SET
+        <trim suffixOverrides=",">
+            <if test="status != null">
+                `status`=#{status},
+            </if>
+            <if test="result != null">
+                `result`=#{result},
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
 </mapper>
