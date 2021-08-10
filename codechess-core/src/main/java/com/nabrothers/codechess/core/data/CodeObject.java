@@ -23,4 +23,12 @@ public abstract class CodeObject {
         this.type = type;
         this.seq = currentSeq.getAndIncrement();
     }
+
+    public void addX(int d) {
+        X += d;
+    }
+
+    public void addY(int d) {
+        Y += d;
+    }
 }
