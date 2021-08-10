@@ -8,10 +8,20 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:spring/*.xml</param-value>
     </context-param>
+
+    <filter>
+        <filter-name>corsFilter</filter-name>
+        <filter-class>com.nabrothers.codechess.core.utils.CorsFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>corsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
 
     <!-- SpringMVC配置 -->
     <!-- The front controller of this Spring Web application, responsible for handling all application requests -->
