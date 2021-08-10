@@ -21,8 +21,8 @@ public abstract class Context {
         while (currentStep < MAX_STEPS && doStep()) {
             currentStep++;
         }
-        afterFinish();
         status = ContextStatus.FINISH.getCode();
+        afterFinish();
     }
 
     abstract protected void beforeStart();

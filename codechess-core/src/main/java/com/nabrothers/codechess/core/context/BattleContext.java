@@ -1,7 +1,12 @@
 package com.nabrothers.codechess.core.context;
 
 
+import com.alibaba.fastjson.JSON;
+import com.nabrothers.codechess.core.dao.BattleRecordDAO;
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
+import com.nabrothers.codechess.core.enums.ContextStatus;
+import com.nabrothers.codechess.core.po.BattleRecordPO;
+import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +15,8 @@ public class BattleContext extends Context{
 
     private List<BattleContextDTO> history = new ArrayList<>();
 
+    private static final BattleRecordDAO battleRecordDAO = ApplicationContextProvider.getBean(BattleRecordDAO.class);
+
     public BattleContext(int id) {
         this.id = id;
     }
@@ -17,17 +24,29 @@ public class BattleContext extends Context{
     @Override
     protected void beforeStart() {
         logger.info("[" + id + "] 已启动", id);
+        BattleRecordPO record = new BattleRecordPO();
+        record.setId(id);
+        record.setStatus(status);
+        battleRecordDAO.update(record);
     }
 
     @Override
     protected boolean doStep() {
         saveStep();
+        if (currentStep > 10) {
+            return false;
+        }
         return true;
     }
 
     @Override
     protected void afterFinish() {
         logger.info("[" + id + "] 已完成", id);
+        BattleRecordPO record = new BattleRecordPO();
+        record.setId(id);
+        record.setStatus(status);
+        record.setResult(JSON.toJSONString(history));
+        battleRecordDAO.update(record);
     }
 
     private void saveStep() {
