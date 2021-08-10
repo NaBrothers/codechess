@@ -58,6 +58,38 @@ let main = function () {
     // Request to do this again ASAP
     requestAnimationFrame(main);
 };
+
+let id;
+
+$.ajax({
+    beforeSend: function(req) {
+        req.setRequestHeader("Accept", "text/html");
+    },
+    type: "get",
+    url: "http://codechess.online:8081/battle/start", 
+    success: function (res) {
+        console.log(res);
+        let resJSON = $.parseJSON(res);
+        console.log(resJSON.id);
+        id = resJSON.id;
+    }
+}).done(
+    function() {
+        $.ajax({
+            beforeSend: function(req) {
+                req.setRequestHeader("Accept", "text/html");
+            },
+            type: "get",
+            url: "http://codechess.online:8081/battle/result?id="+id, 
+            success: function (res) {
+                console.log(res);
+        }
+    });
+    }
+)
+
+
+
 let w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 
