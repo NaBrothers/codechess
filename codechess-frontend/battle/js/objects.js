@@ -15,26 +15,26 @@ const fpsInterval = 1000 / fps;
 const isDebug = true;
 
 export class Object {
-    constructor(name, path, size=gridSize) {
+    constructor(name, path, size=gridSize, seq) {
         this.X = 0;
         this.Y = 0;
         this.name = name;
         this.image = utils.initImage(path);
         this.size = size;
 
-        this.seq = 0;
+        this.seq = seq;
     }
 
     static objectMap = {};
 
-    static currentSeq = 0;
+    // static currentSeq = 0;
 
     static layerIndex = -1;
 
     static maxGettableLayer = 3;
 
     static register(o) {
-        o.seq = Object.currentSeq++;
+        // o.seq = Object.currentSeq++;
         if (!(this.layerIndex in this.objectMap)){
             this.objectMap[this.layerIndex] = {};
         }
@@ -74,12 +74,18 @@ export class Object {
         return currentObject;
     }
 
+    static getObjectBySeq(seq, layer) {
+        if (!layer in Object.objectMap || !seq in Object.objectMap[layer])
+            return null;
+        return Object.objectMap[layer][seq];
+    }
+
     draw() {}
 }
 
 class Effect extends Object {
-    constructor(name, path, size=gridSize) {
-        super(name, path, size);
+    constructor(name, path, size=gridSize, seq) {
+        super(name, path, size, seq);
         this.status = 0;
     }
 
@@ -99,8 +105,8 @@ class Effect extends Object {
 }
 
 export class Attack extends Effect {
-    constructor(name, path, size=gridSize, X, Y, frames, duration) {
-        super(name, path, 32);
+    constructor(name, path, size=gridSize, seq, X, Y, frames, duration) {
+        super(name, path, 32, seq);
         this.frames = frames;
         this.duration = duration;
         this.X = X;
@@ -115,8 +121,8 @@ export class Attack extends Effect {
 
 export class Flyer extends Effect {
     // speed unit: pixel per frame
-    constructor(name, path, size=gridSize, X, Y, vector_x, vector_y, speed) {
-        super(name, path, size);
+    constructor(name, path, size=gridSize, seq, X, Y, vector_x, vector_y, speed) {
+        super(name, path, size, seq);
         this.x = utils.X2x(X);
         this.y = utils.X2x(Y);
         this.vector = {};
@@ -134,11 +140,15 @@ export class Flyer extends Effect {
 
 
 class Entity extends Object {
-    constructor(name, path, size=gridSize) {
-        super(name, path, size);
+    constructor(name, path, size=gridSize, seq) {
+        super(name, path, size, seq);
     }
     
     static layerIndex = 3;
+
+    static getEntityBySeq(seq){
+        return super.getObjectBySeq(seq, this.layerIndex);
+    }
 
     draw() {
         utils.drawImage(this.image, this.X, this.Y);
@@ -146,26 +156,31 @@ class Entity extends Object {
 }
 
 export class Player extends Entity {
-    constructor(name, path, size, X, Y, totalHp, hp=totalHp) {
-        super(name, path, size);
+    constructor(name, path, size, seq, X, Y, totalHp, hp=totalHp) {
+        super(name, path, size, seq);
         this.X = X;
         this.Y = Y;
         this.totalHp = totalHp;
         this.hp = hp;
     }
+
+    static getPlayerBySeq(seq) {
+        return super.getEntityBySeq(seq);
+    }
+
 }
 
 export class Wall extends Entity {
-    constructor(name, path, size=gridSize, X, Y) {
-        super(name, path, size);
+    constructor(name, path, size=gridSize, seq, X, Y) {
+        super(name, path, size, seq);
         this.X = X;
         this.Y = Y;
     }
 }
 
 export class Floor extends Object {
-    constructor(name, path, size=gridSize, X, Y) {
-        super(name, path, size);
+    constructor(name, path, size=gridSize, seq, X, Y) {
+        super(name, path, size, seq);
         this.X = X;
         this.Y = Y;
     }
