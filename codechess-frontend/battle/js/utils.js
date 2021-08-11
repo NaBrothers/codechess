@@ -79,7 +79,7 @@ export function drawFlyer(flyer) {
         flyer.count++;
     } else {
         flyer.image.finished = true;
-        let ack = new objects.Attack("击中", "images/attack.png", gridSize, x2X(flyer.x), x2X(flyer.y), 15, 15);
+        let ack = new objects.Attack("击中", "images/attack.png", gridSize, 10001, x2X(flyer.x), x2X(flyer.y), 15, 15);
         objects.Attack.register(ack);
     }
 }
@@ -193,7 +193,7 @@ function initCanvas(width, height) {
     // }
     canvas.onclick = e => {
         let degree = Math.PI * 2 * Math.random();
-        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
+        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, 10000, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
         objects.Flyer.register(flyer);
         showDetail(objects.Object.getObject(mouseX, mouseY));
     }
@@ -235,6 +235,8 @@ export function renderMouse() {
     drawFill("rgb(255,183,0,0.4)", mouseX, mouseY);
 }
 
+var gameResult;
+
 async function startNewGame() {
     return new Promise((resolve, reject) => {
         let resJSON = null;
@@ -266,6 +268,8 @@ async function getGameResult(id) {
                 url: gameUrl + "/result?id="+id, 
                 success: function (res) {
                     resJSON = $.parseJSON(res);
+                    gameResult = resJSON;
+                    console.log(gameResult);
                 }
             }).done(
                 () => {resolve(resJSON);}
@@ -280,17 +284,33 @@ export async function startAndGet() {
     })
 }
 
-export function updateObjects(players) {
-    for (var i in players){
-        let playerMap = players[i];
-        let player = objects.Player.getPlayerBySeq(playerMap.seq);
-        if (player == null){
-            player = new objects.Player(playerMap.id, heroImgPath, gridSize, playerMap.seq, playerMap.x, playerMap.y, 100, 100);
-            objects.Object.register(player);
+// export function updateObjects(players) {
+//     for (var i in players){
+//         let playerMap = players[i];
+//         let player = objects.Player.getPlayerBySeq(playerMap.seq);
+//         if (player == null){
+//             player = new objects.Player(playerMap.id, heroImgPath, gridSize, playerMap.seq, playerMap.x, playerMap.y, 100, 100);
+//             objects.Object.register(player);
+//         }
+//         player.X = playerMap.x;
+//         player.Y = playerMap.y;
+//     }
+// }
+
+export function updateObjects(step, frameIndex) {
+    if (step >= gameResult.totalSteps-1 || step < 0)
+        return;
+    let lastPlayers = gameResult.steps[step].players;
+    let nextPlayers = gameResult.steps[step+1].players;
+    for (var seq in lastPlayers) {
+        if (seq in nextPlayers){
+            let player = objects.Player.getPlayerBySeq(seq);
+            if (player == null){
+                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
+                objects.Player.register(player);
+            }
+            player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / frame;
+            player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / frame;
         }
-        player.X = playerMap.x;
-        player.Y = playerMap.y;
-        console.log(playerMap);
-        console.log(player);
     }
 }
