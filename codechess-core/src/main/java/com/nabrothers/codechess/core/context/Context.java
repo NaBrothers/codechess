@@ -16,10 +16,12 @@ public abstract class Context {
     private static final int MAX_STEPS = 5000;
 
     public void start() {
+        if (status != ContextStatus.CREATE.getCode()) {
+            return;
+        }
         status = ContextStatus.START.getCode();
         beforeStart();
-        while (currentStep < MAX_STEPS && doStep()) {
-            currentStep++;
+        while (++currentStep < MAX_STEPS && doStep()) {
         }
         status = ContextStatus.FINISH.getCode();
         afterFinish();

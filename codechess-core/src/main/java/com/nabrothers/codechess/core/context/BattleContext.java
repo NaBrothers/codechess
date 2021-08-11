@@ -2,14 +2,20 @@ package com.nabrothers.codechess.core.context;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nabrothers.codechess.core.dao.BattleRecordDAO;
+import com.nabrothers.codechess.core.data.Player;
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
 import com.nabrothers.codechess.core.enums.ContextStatus;
+import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
+import com.nabrothers.codechess.core.utils.CopyUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BattleContext extends Context{
 
@@ -21,6 +27,16 @@ public class BattleContext extends Context{
         this.id = id;
     }
 
+    private List<Player> playerList = new ArrayList<>();
+
+    // Mock
+    {
+        Player ronney = new Player(888, ObjectType.PLAYER.getCode());
+        ronney.setX(12);
+        ronney.setY(12);
+        playerList.add(ronney);
+    }
+
     @Override
     protected void beforeStart() {
         logger.info("[" + id + "] 已启动", id);
@@ -28,10 +44,27 @@ public class BattleContext extends Context{
         record.setId(id);
         record.setStatus(status);
         battleRecordDAO.update(record);
+        saveStep();
     }
 
     @Override
     protected boolean doStep() {
+        Random rand = new Random();
+        int direction = rand.nextInt(4);
+        switch (direction) {
+            case 0:
+                playerList.get(0).addX(1);
+                break;
+            case 1:
+                playerList.get(0).addX(-1);
+                break;
+            case 2:
+                playerList.get(0).addY(1);
+                break;
+            case 3:
+                playerList.get(0).addY(-1);
+                break;
+        }
         saveStep();
         if (currentStep > 10) {
             return false;
@@ -45,13 +78,14 @@ public class BattleContext extends Context{
         BattleRecordPO record = new BattleRecordPO();
         record.setId(id);
         record.setStatus(status);
-        record.setResult(JSON.toJSONString(history));
+        record.setResult(JSON.toJSONString(history, SerializerFeature.DisableCircularReferenceDetect));
         battleRecordDAO.update(record);
     }
 
     private void saveStep() {
         BattleContextDTO battleContextDTO = new BattleContextDTO();
         battleContextDTO.setStep(currentStep);
+        battleContextDTO.setPlayers(CopyUtils.copyObjects(playerList, Player.class));
         history.add(battleContextDTO);
     }
 

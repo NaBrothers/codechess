@@ -35,6 +35,7 @@ public class BattleManager {
             contextMap.put(id, context);
             battleExecutor.submit(() -> {
                 context.start();
+                contextMap.remove(id);
             });
         } catch (Exception e) {
             logger.error(e.getMessage());
