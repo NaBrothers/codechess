@@ -11,9 +11,10 @@ import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
 import com.nabrothers.codechess.core.utils.CopyUtils;
-import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -27,14 +28,14 @@ public class BattleContext extends Context{
         this.id = id;
     }
 
-    private List<Player> playerList = new ArrayList<>();
+    private Map<Long, Player> playerMap = new HashMap();
 
     // Mock
     {
-        Player ronney = new Player(888, ObjectType.PLAYER.getCode());
-        ronney.setX(12);
-        ronney.setY(12);
-        playerList.add(ronney);
+        Player rooney = new Player(888, ObjectType.PLAYER.getCode());
+        rooney.setX(12);
+        rooney.setY(12);
+        playerMap.put(rooney.getSeq(), rooney);
     }
 
     @Override
@@ -51,18 +52,19 @@ public class BattleContext extends Context{
     protected boolean doStep() {
         Random rand = new Random();
         int direction = rand.nextInt(4);
+        Player rooney = (Player)playerMap.values().toArray()[0];
         switch (direction) {
             case 0:
-                playerList.get(0).addX(1);
+                rooney.addX(1);
                 break;
             case 1:
-                playerList.get(0).addX(-1);
+                rooney.addX(-1);
                 break;
             case 2:
-                playerList.get(0).addY(1);
+                rooney.addY(1);
                 break;
             case 3:
-                playerList.get(0).addY(-1);
+                rooney.addY(-1);
                 break;
         }
         saveStep();
@@ -85,7 +87,7 @@ public class BattleContext extends Context{
     private void saveStep() {
         BattleContextDTO battleContextDTO = new BattleContextDTO();
         battleContextDTO.setStep(currentStep);
-        battleContextDTO.setPlayers(CopyUtils.copyObjects(playerList, Player.class));
+        battleContextDTO.setPlayers(CopyUtils.copyObjects(playerMap, Player.class));
         history.add(battleContextDTO);
     }
 

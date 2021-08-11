@@ -3,10 +3,8 @@ package com.nabrothers.codechess.core.utils;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +49,16 @@ public class CopyUtils {
                 .orElse(new ArrayList<>())
                 .stream().map(m -> copyProperties(m, clazz))
                 .collect(Collectors.toList());
+    }
+
+    public static <T, M, K> Map<K, T> copyObjects(Map<K, M> sources, Class<T> clazz) {
+        if (Objects.isNull(sources) || Objects.isNull(clazz) || sources.isEmpty())
+            throw new IllegalArgumentException();
+        Map<K, T> newMap = new HashMap<>();
+        sources.entrySet().stream().forEach(e -> {
+            newMap.put(e.getKey(), copyProperties(e.getValue(), clazz));
+        });
+        return newMap;
     }
 
     /**
