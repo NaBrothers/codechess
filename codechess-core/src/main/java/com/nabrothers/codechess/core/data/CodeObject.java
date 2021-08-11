@@ -3,13 +3,14 @@ package com.nabrothers.codechess.core.data;
 import lombok.Data;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 public abstract class CodeObject {
-    private static AtomicInteger currentSeq = new AtomicInteger();
+    private static AtomicLong currentSeq = new AtomicLong();
 
     protected int id;
-    protected int seq;
+    protected long seq;
     protected int X;
     protected int Y;
     protected int type;
