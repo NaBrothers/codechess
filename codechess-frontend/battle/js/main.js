@@ -18,25 +18,28 @@ const treeImgPath = "images/tree.png";
 const heroImgPath = "images/hero.png";
 
 
-// for (var i = 0; i < gridX; i++){
-//     for (var j = 0; j < gridY; j++){
-//         let grass = new objects.Floor("草", grassImgPath, gridSize, i, j);
-//         objects.Floor.register(grass);
-//         if (i == 0||i == gridX-1||j == 0||j == gridY-1){
-//             let tree = new objects.Wall("树", treeImgPath, gridSize, i, j);
-//             objects.Wall.register(tree);
-//         }
-//     }
-// }
+for (var i = 0; i < gridX; i++){
+    for (var j = 0; j < gridY; j++){
+        let grass = new objects.Floor("草", grassImgPath, gridSize, i * gridY + j, i, j);
+        objects.Floor.register(grass);
+        if (i == 0||i == gridX-1||j == 0||j == gridY-1){
+            let tree = new objects.Wall("树", treeImgPath, gridSize, i * gridY + j + gridX * gridY, i, j);
+            objects.Wall.register(tree);
+        }
+    }
+}
 
-utils.initMap(gridX, gridY, gridSize, treeDensity);
+// utils.initMap(gridX, gridY, gridSize, treeDensity);
 
-let hero = new objects.Player("鲁尼", heroImgPath, gridSize, 3, 3, 100, 50);
-objects.Player.register(hero);
+// let hero = new objects.Player("鲁尼", heroImgPath, gridSize, 3, 3, 100, 50);
+// objects.Player.register(hero);
 // hero = new objects.Player("鲁尼", heroImgPath, gridSize, 4, 4, 100, 100);
 // objects.Player.register(hero);
 // let tree = new objects.Wall("树", treeImgPath, gridSize, 3, 3);
 // objects.Wall.register(tree);
+
+let gameResult;
+
 
 let currentFrame = 0;
 let step = 0;
@@ -53,40 +56,16 @@ let main = function () {
         if (currentFrame == frame) {
             currentFrame = 0;
             step++;
+            let infoOfStep = gameResult.steps[step];
+            if (infoOfStep != undefined)
+                utils.updateObjects(infoOfStep.players);
         }
     }
     // Request to do this again ASAP
     requestAnimationFrame(main);
 };
 
-let id;
 
-$.ajax({
-    beforeSend: function(req) {
-        req.setRequestHeader("Accept", "text/html");
-    },
-    type: "get",
-    url: "http://codechess.online:8081/battle/start", 
-    success: function (res) {
-        console.log(res);
-        let resJSON = $.parseJSON(res);
-        console.log(resJSON.id);
-        id = resJSON.id;
-    }
-}).done(
-    function() {
-        $.ajax({
-            beforeSend: function(req) {
-                req.setRequestHeader("Accept", "text/html");
-            },
-            type: "get",
-            url: "http://codechess.online:8081/battle/result?id="+id, 
-            success: function (res) {
-                console.log(res);
-        }
-    });
-    }
-)
 
 
 
@@ -95,5 +74,9 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 
 // Let's play this game!
 let then = Date.now();
-main();
+utils.startAndGet().then((data) => {
+    gameResult = data;
+    utils.updateObjects(gameResult.steps[0].players);
+    main();
+});
 

@@ -12,6 +12,8 @@ const fpsInterval = 1000 / fps;
 const isDebug = true;
 const grassImgPath = "images/grass.png";
 const treeImgPath = "images/tree.png";
+const heroImgPath = "images/hero.png";
+const gameUrl = "http://codechess.online:8081/battle"
 
 export function initImage(path) {
     let image = new Image();
@@ -231,4 +233,64 @@ export function renderDebug(currentFrame, step) {
 
 export function renderMouse() {
     drawFill("rgb(255,183,0,0.4)", mouseX, mouseY);
+}
+
+async function startNewGame() {
+    return new Promise((resolve, reject) => {
+        let resJSON = null;
+        $.ajax({
+            beforeSend: function(req) {
+                req.setRequestHeader("Accept", "text/html");
+            },
+            type: "get",
+            url: gameUrl + "/start", 
+            success: function (res) {
+                resJSON = $.parseJSON(res);
+                console.log(resJSON.id);
+            }
+        }).done(
+            () => {resolve(resJSON.id);}
+        );
+    });
+}
+
+async function getGameResult(id) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let resJSON = null;
+            $.ajax({
+                beforeSend: function(req) {
+                    req.setRequestHeader("Accept", "text/html");
+                },
+                type: "get",
+                url: gameUrl + "/result?id="+id, 
+                success: function (res) {
+                    resJSON = $.parseJSON(res);
+                }
+            }).done(
+                () => {resolve(resJSON);}
+            );
+        }, 1000);
+    })
+}
+
+export async function startAndGet() {
+    return startNewGame().then(id => {
+        return getGameResult(id);
+    })
+}
+
+export function updateObjects(players) {
+    for (var i in players){
+        let playerMap = players[i];
+        let player = objects.Player.getPlayerBySeq(playerMap.seq);
+        if (player == null){
+            player = new objects.Player(playerMap.id, heroImgPath, gridSize, playerMap.seq, playerMap.x, playerMap.y, 100, 100);
+            objects.Object.register(player);
+        }
+        player.X = playerMap.x;
+        player.Y = playerMap.y;
+        console.log(playerMap);
+        console.log(player);
+    }
 }
