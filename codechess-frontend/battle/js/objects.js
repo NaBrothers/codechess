@@ -168,6 +168,12 @@ export class Player extends Entity {
         return super.getEntityBySeq(seq);
     }
 
+    draw() {
+        super.draw();
+        
+        console.log("x: "+this.X+" y: "+this.Y);
+    }
+
 }
 
 export class Wall extends Entity {

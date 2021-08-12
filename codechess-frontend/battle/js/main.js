@@ -48,6 +48,7 @@ let main = function () {
     let now = Date.now();
     let delta = now - then;
     if (delta > fpsInterval) {
+        utils.updateObjects(step, currentFrame);
         objects.Object.render();
         utils.renderDebug(currentFrame, step);
         utils.renderMouse();
@@ -56,9 +57,6 @@ let main = function () {
         if (currentFrame == frame) {
             currentFrame = 0;
             step++;
-            let infoOfStep = gameResult.steps[step];
-            if (infoOfStep != undefined)
-                utils.updateObjects(infoOfStep.players);
         }
     }
     // Request to do this again ASAP
@@ -76,7 +74,6 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 let then = Date.now();
 utils.startAndGet().then((data) => {
     gameResult = data;
-    utils.updateObjects(gameResult.steps[0].players);
     main();
 });
 
