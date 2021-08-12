@@ -298,19 +298,29 @@ export async function startAndGet() {
 // }
 
 export function updateObjects(step, frameIndex) {
-    if (step >= gameResult.totalSteps-1 || step < 0)
+    if (step >= gameResult.totalSteps || step < 0 || (step == gameResult.totalSteps-1 && frameIndex != 0))
         return;
     let lastPlayers = gameResult.steps[step].players;
-    let nextPlayers = gameResult.steps[step+1].players;
     for (var seq in lastPlayers) {
-        if (seq in nextPlayers){
+        if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
                 player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
                 objects.Player.register(player);
             }
-            player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / frame;
-            player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / frame;
+            player.X = lastPlayers[seq].x;
+            player.Y = lastPlayers[seq].y;
+        }else {
+            let nextPlayers = gameResult.steps[step+1].players;
+            if (seq in nextPlayers){
+                let player = objects.Player.getPlayerBySeq(seq);
+                if (player == null){
+                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
+                    objects.Player.register(player);
+                }
+                player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / frame;
+                player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / frame
+            }
         }
     }
 }
