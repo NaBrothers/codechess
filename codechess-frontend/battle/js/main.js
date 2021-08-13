@@ -44,10 +44,12 @@ let gameResult;
 let currentFrame = 0;
 let step = 0;
 
+let seekBar;
+
 let main = function () {
     let now = Date.now();
     let delta = now - then;
-    if (delta > fpsInterval) {
+    if (delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
         utils.updateObjects(step, currentFrame);
         objects.Object.render();
         utils.renderDebug(currentFrame, step);
@@ -57,6 +59,7 @@ let main = function () {
         if (currentFrame == frame) {
             currentFrame = 0;
             step++;
+            seekBar.value = step;
         }
     }
     // Request to do this again ASAP
@@ -74,6 +77,11 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 let then = Date.now();
 utils.startAndGet().then((data) => {
     gameResult = data;
+    seekBar = document.getElementById("seekbar");
+    seekBar.onclick = () => {
+        step = parseInt(seekBar.value);
+        currentFrame = 0;
+    }
     main();
 });
 

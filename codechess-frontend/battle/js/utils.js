@@ -199,7 +199,7 @@ function initCanvas(width, height) {
     }
 }
 
-var panel, detail, logger;
+var panel, detail, logger, seekBar, seekBarNum;
 
 function initPanel() {
     panel = document.createElement("div");
@@ -213,6 +213,12 @@ function initPanel() {
     logger = document.createElement("div");
     logger.id = "logger";
     panel.appendChild(logger);
+
+    seekBar = document.createElement("input");
+    seekBar.type = "range";
+    seekBar.id = "seekbar";
+    seekBar.value = 0;
+    panel.appendChild(seekBar);
 }
 
 export function renderDebug(currentFrame, step) {
@@ -270,6 +276,8 @@ async function getGameResult(id) {
                     resJSON = $.parseJSON(res);
                     gameResult = resJSON;
                     console.log(gameResult);
+                    seekBar.min = 0;
+                    seekBar.max = gameResult.totalSteps - 1;
                 }
             }).done(
                 () => {resolve(resJSON);}
@@ -311,6 +319,8 @@ export function updateObjects(step, frameIndex) {
             player.X = lastPlayers[seq].x;
             player.Y = lastPlayers[seq].y;
         }else {
+            console.log(gameResult);
+            console.log(step);
             let nextPlayers = gameResult.steps[step+1].players;
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);

@@ -38,6 +38,10 @@
     background-color: black;
 }
 
+#seekbarnum {
+    color: white;
+}
+
 #logger p {
     margin: 5px;
 }
