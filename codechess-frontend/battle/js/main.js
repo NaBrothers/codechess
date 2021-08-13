@@ -9,7 +9,7 @@ const height = gridX * gridSize;
 const width = gridY * gridSize;
 const treeDensity = 0.1;
 const frame = 30;
-const fps = 30;
+const fps = 60;
 const fpsInterval = 1000 / fps;
 const isDebug = true;
 
