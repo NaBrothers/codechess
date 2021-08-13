@@ -42,6 +42,15 @@
     color: white;
 }
 
+#buttonmulti {
+    width: 100px;
+    height: 40px;
+    display: flex;
+    color: black;
+    align-items: center;
+    font-size: 30px;
+}
+
 #logger p {
     margin: 5px;
 }

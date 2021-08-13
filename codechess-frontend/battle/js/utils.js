@@ -15,6 +15,8 @@ const treeImgPath = "images/tree.png";
 const heroImgPath = "images/hero.png";
 const gameUrl = "http://codechess.online:8081/battle"
 
+export var multiple = 1;
+
 export function initImage(path) {
     let image = new Image();
     image.onload = () => {
@@ -199,12 +201,31 @@ function initCanvas(width, height) {
     }
 }
 
-var panel, detail, logger, seekBar, seekBarNum;
+var panel, buttonMulti, detail, logger, seekBar, seekBarNum;
 
 function initPanel() {
     panel = document.createElement("div");
     panel.id = "panel";
     wrapper.appendChild(panel);
+
+    buttonMulti = document.createElement("button");
+    buttonMulti.id = "buttonmulti";
+    buttonMulti.innerHTML = "1.0x";
+    buttonMulti.onclick = e =>{
+        multiple *= 2;
+        if(multiple > 4){
+            multiple = 0.5;
+        }
+        if (multiple == 0.5)
+            buttonMulti.innerHTML = "0.5x";
+        else if (multiple == 1)
+            buttonMulti.innerHTML = "1.0x";
+        else if (multiple == 2)
+            buttonMulti.innerHTML = "2.0x";
+        else
+            buttonMulti.innerHTML = "4.0x";
+    }
+    panel.appendChild(buttonMulti);
 
     detail = document.createElement("div");
     detail.id = "detail";

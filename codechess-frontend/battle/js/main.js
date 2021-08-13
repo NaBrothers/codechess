@@ -50,12 +50,12 @@ let seekBar;
 let main = function () {
     let now = Date.now();
     let delta = now - then;
-    if (!inControl && delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
+    if (!inControl && delta > (fpsInterval / utils.multiple) && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
         utils.updateObjects(step, currentFrame);
         objects.Object.render();
         utils.renderDebug(currentFrame, step);
         utils.renderMouse();
-        then = now - delta % fpsInterval;
+        then = now - delta % (fpsInterval / utils.multiple);
         currentFrame++;
         if (currentFrame == frame) {
             currentFrame = 0;
