@@ -6,7 +6,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nabrothers.codechess.core.dao.BattleRecordDAO;
 import com.nabrothers.codechess.core.data.Player;
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
-import com.nabrothers.codechess.core.enums.ContextStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
@@ -33,8 +32,8 @@ public class BattleContext extends Context{
     // Mock
     {
         Player rooney = new Player(888, ObjectType.PLAYER.getCode());
-        rooney.setX(12);
-        rooney.setY(12);
+        rooney.setX(4);
+        rooney.setY(20);
         playerMap.put(rooney.getSeq(), rooney);
     }
 
@@ -51,24 +50,10 @@ public class BattleContext extends Context{
     @Override
     protected boolean doStep() {
         Random rand = new Random();
-        int direction = rand.nextInt(4);
         Player rooney = (Player)playerMap.values().toArray()[0];
-        switch (direction) {
-            case 0:
-                rooney.addX(1);
-                break;
-            case 1:
-                rooney.addX(-1);
-                break;
-            case 2:
-                rooney.addY(1);
-                break;
-            case 3:
-                rooney.addY(-1);
-                break;
-        }
+        rooney.moveTo(20, 4);
         saveStep();
-        if (currentStep > 10) {
+        if (currentStep > 100) {
             return false;
         }
         return true;

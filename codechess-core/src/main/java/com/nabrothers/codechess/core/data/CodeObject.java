@@ -1,8 +1,9 @@
 package com.nabrothers.codechess.core.data;
 
+import com.nabrothers.codechess.core.manager.BattleConfigManager;
+import com.nabrothers.codechess.core.utils.BattleUtils;
 import lombok.Data;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Data
@@ -11,8 +12,8 @@ public abstract class CodeObject {
 
     protected int id;
     protected long seq;
-    protected int X;
-    protected int Y;
+    protected int x;
+    protected int y;
     protected int type;
 
     protected CodeObject() {
@@ -25,11 +26,11 @@ public abstract class CodeObject {
         this.seq = currentSeq.getAndIncrement();
     }
 
-    public void addX(int d) {
-        X += d;
+    public boolean isMovable() {
+        return this instanceof Movable;
     }
 
-    public void addY(int d) {
-        Y += d;
+    public boolean isVolume() {
+        return this instanceof Volume;
     }
 }

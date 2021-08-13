@@ -1,4 +1,4 @@
 package com.nabrothers.codechess.core.data;
 
-public class Flyer extends Effect{
+public class Flyer extends Effect implements Movable{
 }
