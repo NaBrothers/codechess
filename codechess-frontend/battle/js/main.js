@@ -43,13 +43,14 @@ let gameResult;
 
 let currentFrame = 0;
 let step = 0;
+let inControl = false;
 
 let seekBar;
 
 let main = function () {
     let now = Date.now();
     let delta = now - then;
-    if (delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
+    if (!inControl && delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
         utils.updateObjects(step, currentFrame);
         objects.Object.render();
         utils.renderDebug(currentFrame, step);
@@ -81,6 +82,13 @@ utils.startAndGet().then((data) => {
     seekBar.onclick = () => {
         step = parseInt(seekBar.value);
         currentFrame = 0;
+        inControl = false;
+    };
+    seekBar.oninput = () => {
+        inControl = true;
+        utils.updateObjects(seekBar.value, 0);
+        objects.Object.render();
+        utils.renderDebug(0, seekBar.value);
     }
     main();
 });
