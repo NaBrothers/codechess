@@ -1,13 +1,37 @@
 #wrapper {
-    width : 1200px;
+    width : 1632px;
     height: 768px;
     position: absolute;
     border: 5px solid lightgray;
     left: 50%;
     top: 50%;
-    margin: -384px 0 0 -600px;
+    margin: -384px 0 0 -816px;
     background-color : black;
     display: flex;
+}
+
+#stats {
+    width: 432px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#detail {
+    width: calc(100% - 4px);
+    height: 214px;
+    border: 2px solid white;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+#status {
+    width: calc(100% - 100px);
+    margin: 25px 50px;
+    height: 500px;
 }
 
 #panel {
@@ -17,15 +41,12 @@
     flex-direction: column;
 }
 
-#detail {
+#settings {
     width: calc(100% - 4px);
     height: 264px;
     border: 2px solid white;
-    background-color: black;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
+    flex-direction: column;
 }
 
 #logger {
@@ -38,17 +59,53 @@
     background-color: black;
 }
 
-#seekbarnum {
+#stepController {
+    position: relative;
+    top: 230px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#seekbar {
+    width: 100%;
+    position: relative;
+    top: 180px;
+}
+
+#stepInfo {
+    width: 64px;
+    height: 24px;
+    font-size: 16px;
     color: white;
 }
 
-#buttonmulti {
-    width: 100px;
-    height: 40px;
+.play {
+    padding: 0;
+    height: 24px;
+    background-color: black;
+    border-style: solid;
+    border-width: 12px 0 12px 24px;
+    border-color: transparent transparent transparent white;
+}
+
+.pause {
+    padding: 0;
+    height: 24px;
+    width: 24px;
+    background-color: black;
+    border-style: double;
+    border-width: 0px 0px 0px 20px;
+    border-color: white;
+}
+
+#buttonMulti {
+    margin: 0 8px 0 8px;
+    width: 48px;
+    height: 24px;
     display: flex;
     color: black;
     align-items: center;
-    font-size: 30px;
+    font-size: 16px;
 }
 
 #logger p {

@@ -137,6 +137,7 @@ export function init() {
     if (!isInit){
         body = document.body;
         initWrapper();
+        initStats();
         initCanvas(width, height);
         initPanel();
         isInit = true;
@@ -160,6 +161,22 @@ function initWrapper() {
     wrapper = document.createElement("div");
     wrapper.id = "wrapper";
     body.appendChild(wrapper);
+}
+
+let stats, status;
+
+function initStats() {
+    stats = document.createElement("div");
+    stats.id = "stats";
+    wrapper.appendChild(stats);
+
+    detail = document.createElement("div");
+    detail.id = "detail";
+    stats.appendChild(detail);
+
+    status = document.createElement("div");
+    status.id = "status";
+    stats.appendChild(status);
 }
 
 var canvas, ctx;
@@ -201,15 +218,49 @@ function initCanvas(width, height) {
     }
 }
 
-var panel, buttonMulti, detail, logger, seekBar, seekBarNum;
+export var panel, buttonMulti, detail, logger, seekBar,settings, stepController, stepInfo, playButton;
 
 function initPanel() {
     panel = document.createElement("div");
     panel.id = "panel";
     wrapper.appendChild(panel);
 
+    settings = document.createElement("div");
+    settings.id = "settings";
+    panel.appendChild(settings);
+
+    stepController = document.createElement("div");
+    stepController.id = "stepController"
+    settings.appendChild(stepController);
+
+    seekBar = document.createElement("input");
+    seekBar.type = "range";
+    seekBar.id = "seekbar";
+    seekBar.value = 0;
+    settings.appendChild(seekBar);
+
+    stepInfo = document.createElement("div");
+    stepInfo.id = "stepInfo";
+    stepInfo.innerHTML = "0/0";
+    stepController.appendChild(stepInfo);
+
+    playButton = document.createElement("button");
+    playButton.class = "playButton";
+    playButton.setAttribute("class", "pause");
+    playButton.value = "play";
+    playButton.onclick = e => {
+        if (playButton.value == "play") {
+            playButton.setAttribute("class", "play");
+            playButton.value = "pause";
+        } else {
+            playButton.setAttribute("class", "pause");
+            playButton.value = "play";
+        }
+    }
+    stepController.appendChild(playButton)
+
     buttonMulti = document.createElement("button");
-    buttonMulti.id = "buttonmulti";
+    buttonMulti.id = "buttonMulti";
     buttonMulti.innerHTML = "1.0x";
     buttonMulti.onclick = e =>{
         multiple *= 2;
@@ -225,21 +276,11 @@ function initPanel() {
         else
             buttonMulti.innerHTML = "4.0x";
     }
-    panel.appendChild(buttonMulti);
-
-    detail = document.createElement("div");
-    detail.id = "detail";
-    panel.appendChild(detail);
+    stepController.appendChild(buttonMulti);
 
     logger = document.createElement("div");
     logger.id = "logger";
     panel.appendChild(logger);
-
-    seekBar = document.createElement("input");
-    seekBar.type = "range";
-    seekBar.id = "seekbar";
-    seekBar.value = 0;
-    panel.appendChild(seekBar);
 }
 
 export function renderDebug(currentFrame, step) {
@@ -349,8 +390,8 @@ export function updateObjects(step, frameIndex) {
                     player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
                     objects.Player.register(player);
                 }
-                player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / frame;
-                player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / frame
+                player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
+                player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / Math.floor(frame / multiple);
             }
         }
     }

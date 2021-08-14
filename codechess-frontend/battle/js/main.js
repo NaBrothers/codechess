@@ -1,5 +1,6 @@
 import * as objects from './objects.js'
 import * as utils from './utils.js'
+import {multiple, playButton, seekBar, stepInfo} from "./utils.js";
 
 // 参数  从后端读
 const gridSize = 32;
@@ -45,23 +46,22 @@ let currentFrame = 0;
 let step = 0;
 let inControl = false;
 
-let seekBar;
-
 let main = function () {
     let now = Date.now();
     let delta = now - then;
-    if (!inControl && delta > (fpsInterval / utils.multiple) && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
+    if (!inControl && playButton.value == "play" && delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
         utils.updateObjects(step, currentFrame);
         objects.Object.render();
         utils.renderDebug(currentFrame, step);
         utils.renderMouse();
-        then = now - delta % (fpsInterval / utils.multiple);
+        then = now - delta % fpsInterval;
         currentFrame++;
-        if (currentFrame == frame) {
+        if (currentFrame >= Math.floor(frame / multiple)) {
             currentFrame = 0;
             step++;
             seekBar.value = step;
         }
+        stepInfo.innerText = seekBar.value + "/" + gameResult.steps.length;
     }
     // Request to do this again ASAP
     requestAnimationFrame(main);
@@ -78,7 +78,6 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 let then = Date.now();
 utils.startAndGet().then((data) => {
     gameResult = data;
-    seekBar = document.getElementById("seekbar");
     seekBar.onclick = () => {
         step = parseInt(seekBar.value);
         currentFrame = 0;
@@ -89,7 +88,9 @@ utils.startAndGet().then((data) => {
         utils.updateObjects(seekBar.value, 0);
         objects.Object.render();
         utils.renderDebug(0, seekBar.value);
+        stepInfo.innerText = seekBar.value + "/" + gameResult.steps.length;
     }
+    stepInfo.innerText = step + "/" + gameResult.steps.length;
     main();
 });
 
