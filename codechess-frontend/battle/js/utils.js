@@ -1,19 +1,20 @@
 import * as objects from './objects.js'
 // 参数  从后端读
-const gridSize = 32;
-const gridX = 24;
-const gridY = 24;
-const height = gridX * gridSize;
-const width = gridY * gridSize;
-const treeDensity = 0.1;
-const frame = 30;
-const fps = 30;
-const fpsInterval = 1000 / fps;
-const isDebug = true;
-const grassImgPath = "images/grass.png";
-const treeImgPath = "images/tree.png";
-const heroImgPath = "images/hero.png";
-const gameUrl = "http://codechess.online:8081/battle"
+// const gridSize = 32;
+// const gridX = 24;
+// const gridY = 24;
+// const height = gridX * gridSize;
+// const width = gridY * gridSize;
+// const treeDensity = 0.1;
+// const frame = 30;
+// const fps = 30;
+// const fpsInterval = 1000 / fps;
+// const isDebug = true;
+// const grassImgPath = "images/grass.png";
+// const treeImgPath = "images/tree.png";
+// const heroImgPath = "images/hero.png";
+// const gameUrl = "http://codechess.online:8081/battle"
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl} from './const.js'
 
 export var multiple = 1;
 

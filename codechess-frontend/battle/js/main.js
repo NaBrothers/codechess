@@ -1,22 +1,8 @@
 import * as objects from './objects.js'
 import * as utils from './utils.js'
-import {multiple, playButton, seekBar, stepInfo} from "./utils.js";
+import {multiple, playButton, seekBar, stepInfo} from "./utils.js"
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath} from './const.js'
 
-// 参数  从后端读
-const gridSize = 32;
-const gridX = 24;
-const gridY = 24;
-const height = gridX * gridSize;
-const width = gridY * gridSize;
-const treeDensity = 0.1;
-const frame = 30;
-const fps = 60;
-const fpsInterval = 1000 / fps;
-const isDebug = true;
-
-const grassImgPath = "images/grass.png";
-const treeImgPath = "images/tree.png";
-const heroImgPath = "images/hero.png";
 
 
 for (var i = 0; i < gridX; i++){
@@ -52,16 +38,26 @@ let main = function () {
     if (!inControl && playButton.value == "play" && delta > fpsInterval && (step < gameResult.totalSteps-1 || (step == gameResult.totalSteps-1 && currentFrame == 0))) {
         utils.updateObjects(step, currentFrame);
         objects.Object.render();
-        utils.renderDebug(currentFrame, step);
         utils.renderMouse();
+        utils.renderDebug(currentFrame, step);
         then = now - delta % fpsInterval;
-        currentFrame++;
+        if (step == gameResult.totalSteps-1 && currentFrame == 0){
+            playButton.setAttribute("class", "play");
+            playButton.value = "pause";
+        }
+        else
+            currentFrame++;
         if (currentFrame >= Math.floor(frame / multiple)) {
             currentFrame = 0;
             step++;
             seekBar.value = step;
         }
         stepInfo.innerText = seekBar.value + "/" + gameResult.steps.length;
+    } else if (playButton.value == "pause" && delta > fpsInterval) {
+        objects.Object.render();
+        utils.renderMouse();
+        utils.renderDebug(currentFrame, step);
+        then = now - delta % fpsInterval;
     }
     // Request to do this again ASAP
     requestAnimationFrame(main);
