@@ -1,18 +1,19 @@
 import * as utils from './utils.js'
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl} from './const.js'
 
 utils.init();
 
 // 参数  从后端读
-const gridSize = 32;
-const gridX = 24;
-const gridY = 24;
-const height = gridX * gridSize;
-const width = gridY * gridSize;
-const treeDensity = 0.1;
-const frame = 30;
-const fps = 30;
-const fpsInterval = 1000 / fps;
-const isDebug = true;
+// const gridSize = 32;
+// const gridX = 24;
+// const gridY = 24;
+// const height = gridX * gridSize;
+// const width = gridY * gridSize;
+// const treeDensity = 0.1;
+// const frame = 30;
+// const fps = 30;
+// const fpsInterval = 1000 / fps;
+// const isDebug = true;
 
 export class Object {
     constructor(name, path, size=gridSize, seq) {
