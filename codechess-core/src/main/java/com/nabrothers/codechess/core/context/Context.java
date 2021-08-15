@@ -20,11 +20,26 @@ public abstract class Context {
             return;
         }
         status = ContextStatus.START.getCode();
-        beforeStart();
-        while (++currentStep < MAX_STEPS && doStep()) {
+        try {
+            beforeStart();
+        } catch (Exception e) {
+            logger.error("["+id+"] beforeStart异常", e);
+        }
+        while (++currentStep < MAX_STEPS) {
+            try {
+                if (!doStep()) {
+                    break;
+                }
+            } catch (Exception e) {
+                logger.error("["+id+"] doStep异常", e);
+            }
         }
         status = ContextStatus.FINISH.getCode();
-        afterFinish();
+        try {
+            afterFinish();
+        } catch (Exception e) {
+            logger.error("["+id+"] afterFinish异常", e);
+        }
     }
 
     abstract protected void beforeStart();

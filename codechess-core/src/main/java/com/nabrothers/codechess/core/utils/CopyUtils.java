@@ -43,7 +43,7 @@ public class CopyUtils {
      * @return 目标列表
      */
     public static <T, M> List<T> copyObjects(List<M> sources, Class<T> clazz) {
-        if (Objects.isNull(sources) || Objects.isNull(clazz) || sources.isEmpty())
+        if (Objects.isNull(sources) || Objects.isNull(clazz))
             throw new IllegalArgumentException();
         return Optional.of(sources)
                 .orElse(new ArrayList<>())
@@ -52,7 +52,7 @@ public class CopyUtils {
     }
 
     public static <T, M, K> Map<K, T> copyObjects(Map<K, M> sources, Class<T> clazz) {
-        if (Objects.isNull(sources) || Objects.isNull(clazz) || sources.isEmpty())
+        if (Objects.isNull(sources) || Objects.isNull(clazz))
             throw new IllegalArgumentException();
         Map<K, T> newMap = new HashMap<>();
         sources.entrySet().stream().forEach(e -> {
