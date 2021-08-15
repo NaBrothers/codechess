@@ -4,18 +4,17 @@ package com.nabrothers.codechess.core.context;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nabrothers.codechess.core.dao.BattleRecordDAO;
+import com.nabrothers.codechess.core.data.Effect;
+import com.nabrothers.codechess.core.data.Flyer;
 import com.nabrothers.codechess.core.data.Player;
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
+import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
 import com.nabrothers.codechess.core.utils.CopyUtils;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class BattleContext extends Context{
 
@@ -29,9 +28,11 @@ public class BattleContext extends Context{
 
     private Map<Long, Player> playerMap = new HashMap();
 
+    private Map<Long, Flyer> flyerMap = new HashMap();
+
     // Mock
     {
-        Player rooney = new Player(888, ObjectType.PLAYER.getCode());
+        Player rooney = new Player(888);
         rooney.setX(4);
         rooney.setY(20);
         playerMap.put(rooney.getSeq(), rooney);
@@ -52,6 +53,16 @@ public class BattleContext extends Context{
         Random rand = new Random();
         Player rooney = (Player)playerMap.values().toArray()[0];
         rooney.moveTo(20, 4);
+        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 2));
+        Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Long, Flyer> entry = it.next();
+            if (entry.getValue().getStatus() == EffectStatus.FINISH.getCode()) {
+                it.remove();
+                continue;
+            }
+            entry.getValue().cast();
+        }
         saveStep();
         if (currentStep > 100) {
             return false;
@@ -73,6 +84,7 @@ public class BattleContext extends Context{
         BattleContextDTO battleContextDTO = new BattleContextDTO();
         battleContextDTO.setStep(currentStep);
         battleContextDTO.setPlayers(CopyUtils.copyObjects(playerMap, Player.class));
+        battleContextDTO.setFlyers(CopyUtils.copyObjects(flyerMap, Flyer.class));
         history.add(battleContextDTO);
     }
 
@@ -85,5 +97,19 @@ public class BattleContext extends Context{
         this.history = history;
     }
 
+    public Map<Long, Player> getPlayerMap() {
+        return playerMap;
+    }
 
+    public void setPlayerMap(Map<Long, Player> playerMap) {
+        this.playerMap = playerMap;
+    }
+
+    public Map<Long, Flyer> getFlyerMap() {
+        return flyerMap;
+    }
+
+    public void setFlyerMap(Map<Long, Flyer> flyerMap) {
+        this.flyerMap = flyerMap;
+    }
 }

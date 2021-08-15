@@ -1,14 +1,14 @@
 package com.nabrothers.codechess.core.data;
 
-import com.nabrothers.codechess.core.utils.BattleUtils;
+import com.nabrothers.codechess.core.enums.ObjectType;
 
-public class Player extends Entity implements Movable{
+public class Player extends Entity implements Movable, Effectable{
     public Player() {
         super();
     }
 
-    public Player(int id, int type) {
-        super(id, type);
+    public Player(int id) {
+        super(id, ObjectType.PLAYER.getCode());
     }
 
     @Override
@@ -32,5 +32,10 @@ public class Player extends Entity implements Movable{
         int dx = vx == 0 ? 0 : (isX ? vx / Math.abs(vx) : 0);
         int dy = vy == 0 ? 0 : (isX ? 0 : vy / Math.abs(vy));
         return move(dx, dy);
+    }
+
+    @Override
+    public boolean cast(Effect e) {
+        return e.cast();
     }
 }

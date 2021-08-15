@@ -7,6 +7,10 @@ public class BattleUtils {
         return x * BattleConfigManager.GRID_SIZE;
     }
 
+    public static int toPx(double x) {
+        return (int) Math.floor(x * BattleConfigManager.GRID_SIZE);
+    }
+
     public static int toX(int px) {
         return (int) (px / BattleConfigManager.GRID_SIZE);
     }

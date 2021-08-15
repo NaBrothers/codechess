@@ -2,6 +2,7 @@ package com.nabrothers.codechess.core.manager;
 
 import com.nabrothers.codechess.core.context.BattleContext;
 import com.nabrothers.codechess.core.context.Context;
+import com.nabrothers.codechess.core.utils.ContextUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,15 @@ public class BattleManager {
             Context context = new BattleContext(id);
             contextMap.put(id, context);
             battleExecutor.submit(() -> {
+                ContextUtils.add("context", context);
                 context.start();
                 contextMap.remove(id);
+                ContextUtils.clear();
             });
         } catch (Exception e) {
             logger.error(e.getMessage());
+            contextMap.remove(id);
+            ContextUtils.clear();
             return false;
         }
         return true;
