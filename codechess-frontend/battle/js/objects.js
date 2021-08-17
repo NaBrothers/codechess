@@ -76,7 +76,7 @@ export class Object {
     }
 
     static getObjectBySeq(seq, layer) {
-        if (!layer in Object.objectMap || !seq in Object.objectMap[layer])
+        if (!(layer in Object.objectMap) || !(seq in Object.objectMap[layer]))
             return null;
         return Object.objectMap[layer][seq];
     }
@@ -85,29 +85,34 @@ export class Object {
 }
 
 class Effect extends Object {
-    constructor(name, path, size=gridSize, seq) {
+    constructor(name, path, size, seq, id) {
         super(name, path, size, seq);
         this.status = 0;
+        this.id = id;
     }
 
     static layerIndex = 5;
 
+    static getEffectBySeq(seq){
+        return super.getObjectBySeq(seq, this.layerIndex);
+    }
+
     draw() {
         if (this.status == 0) {
-            utils.printAction("hero","释放技能" + "<span class='highlight'>" + this.name + "</span>");
+            utils.printAction(this.id,"释放技能" + "<span class='highlight'>" + this.name + "</span>");
             this.status = 1;
         }
         if (this.status == 1 && this.image.finished) {
             this.status = 2;
-            utils.printAction("hero","结束" + "<span class='highlight'>" + this.name + "</span>");
+            utils.printAction(this.id,"结束" + "<span class='highlight'>" + this.name + "</span>");
             delete Object.objectMap[Effect.layerIndex][this.seq];
         }
     }
 }
 
 export class Attack extends Effect {
-    constructor(name, path, size=gridSize, seq, X, Y, frames, duration) {
-        super(name, path, 32, seq);
+    constructor(name, path, size, seq, id, X, Y, frames, duration) {
+        super(name, path, 32, seq, id);
         this.frames = frames;
         this.duration = duration;
         this.X = X;
@@ -122,8 +127,8 @@ export class Attack extends Effect {
 
 export class Flyer extends Effect {
     // speed unit: pixel per frame
-    constructor(name, path, size=gridSize, seq, X, Y, vector_x, vector_y, speed) {
-        super(name, path, size, seq);
+    constructor(name, path, size, seq, id, X, Y, vector_x, vector_y, speed) {
+        super(name, path, size, seq, id);
         this.x = utils.X2x(X);
         this.y = utils.X2x(Y);
         this.vector = {};
@@ -132,9 +137,17 @@ export class Flyer extends Effect {
         this.speed = speed;
     }
 
+    static getFlyerBySeq(seq) {
+        return super.getEffectBySeq(seq);
+    }
+
     draw() {
         super.draw();
         utils.drawFlyer(this);
+    }
+
+    finish() {
+        this.image.finished = true;
     }
 }
 
@@ -172,7 +185,7 @@ export class Player extends Entity {
     draw() {
         super.draw();
         
-        console.log("x: "+this.X+" y: "+this.Y);
+        // console.log("x: "+this.X+" y: "+this.Y);
     }
 
 }

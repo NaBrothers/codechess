@@ -10,6 +10,20 @@
     display: flex;
 }
 
+#map {
+    position: absolute; 
+    left: 0; 
+    top: 0;
+    z-index: 0;
+}
+
+#mouseLayer {
+    position: absolute; 
+    left: 0; 
+    top: 0;
+    z-index: 1;
+}
+
 #stats {
     width: 432px;
     display: flex;

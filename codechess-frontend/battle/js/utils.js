@@ -36,9 +36,9 @@ export function drawImage(image, X, Y, degree=0) {
     ctx.restore();
 }
 
-export function drawFill(color, X, Y) {
-    ctx.fillStyle = color;
-    ctx.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
+export function drawFill(color, X, Y, context=ctx) {
+    context.fillStyle = color;
+    context.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
 }
 
 export function drawGif(image, X, Y, frames, size, duration = frame, count = 1) {
@@ -69,7 +69,7 @@ export function drawFlyer(flyer) {
     if (flyer.image.finished == undefined){
         flyer.image.finished = false;
         flyer.count = 0;
-    } else if (flyer.image.finished == true) return;
+    }
     flyer.x += flyer.vector.x * flyer.speed;
     flyer.y += flyer.vector.y * flyer.speed;
     let degree;
@@ -77,13 +77,14 @@ export function drawFlyer(flyer) {
         degree = Math.asin(flyer.vector.y);
     else
         degree = Math.PI - Math.asin(flyer.vector.y);
-    if (flyer.count < 50 && !flyer.image.finished){
+    if (!flyer.image.finished){
         drawImage(flyer.image, flyer.x/gridSize, flyer.y/gridSize, degree);
         flyer.count++;
     } else {
-        flyer.image.finished = true;
-        let ack = new objects.Attack("击中", "images/attack.png", gridSize, 10001, x2X(flyer.x), x2X(flyer.y), 15, 15);
+        // flyer.image.finished = true;
+        let ack = new objects.Attack("击中", "images/attack.png", gridSize, flyer.seq, flyer.id, flyer.X, flyer.Y, 15, 15);
         objects.Attack.register(ack);
+
     }
 }
 
@@ -180,7 +181,7 @@ function initStats() {
     stats.appendChild(status);
 }
 
-var canvas, ctx;
+var canvas, ctx, mouseCanvas, mouseCtx;
 
 let mousex = -1;
 let mousey = -1;
@@ -194,14 +195,21 @@ function initCanvas(width, height) {
     canvas.height = height;
     wrapper.appendChild(canvas);
     ctx = canvas.getContext("2d");
+
+    mouseCanvas = document.createElement("canvas");
+    mouseCanvas.id = "mouseLayer";
+    mouseCanvas.width = width;
+    mouseCanvas.height = height;
+    wrapper.appendChild(mouseCanvas);
+    mouseCtx = mouseCanvas.getContext("2d");
     
-    canvas.onmousemove = e => {
+    mouseCanvas.onmousemove = e => {
         mousex = e.offsetX;
         mousey = e.offsetY;
         mouseX = x2X(e.offsetX);
         mouseY = x2X(e.offsetY);
     };
-    canvas.onmouseleave = e => {
+    mouseCanvas.onmouseleave = e => {
         mousex = -1;
         mousey = -1;
         mouseX = -1;
@@ -211,10 +219,10 @@ function initCanvas(width, height) {
     //     let atk = new objects.Attack("攻击", "images/attack.png", gridSize, mouseX, mouseY, 15, 15);
     //     objects.Attack.register(atk);
     // }
-    canvas.onclick = e => {
-        let degree = Math.PI * 2 * Math.random();
-        let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, 10000, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
-        objects.Flyer.register(flyer);
+    mouseCanvas.onclick = e => {
+        // let degree = Math.PI * 2 * Math.random();
+        // let flyer = new objects.Flyer("飞行", "images/flyer.png", gridSize, 10000, 0, mouseX, mouseY, Math.cos(degree), Math.sin(degree), 2);
+        // objects.Flyer.register(flyer);
         showDetail(objects.Object.getObject(mouseX, mouseY));
     }
 }
@@ -301,7 +309,8 @@ export function renderDebug(currentFrame, step) {
 }
 
 export function renderMouse() {
-    drawFill("rgb(255,183,0,0.4)", mouseX, mouseY);
+    mouseCanvas.height = mouseCanvas.height;
+    drawFill("rgb(255,183,0,0.4)", mouseX, mouseY, mouseCtx);
 }
 
 var gameResult;
@@ -371,6 +380,8 @@ export async function startAndGet() {
 export function updateObjects(step, frameIndex) {
     if (step >= gameResult.totalSteps || step < 0 || (step == gameResult.totalSteps-1 && frameIndex != 0))
         return;
+
+    // players part
     let lastPlayers = gameResult.steps[step].players;
     for (var seq in lastPlayers) {
         if (frameIndex == 0){
@@ -382,8 +393,8 @@ export function updateObjects(step, frameIndex) {
             player.X = lastPlayers[seq].x;
             player.Y = lastPlayers[seq].y;
         }else {
-            console.log(gameResult);
-            console.log(step);
+            // console.log(gameResult);
+            // console.log(step);
             let nextPlayers = gameResult.steps[step+1].players;
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
@@ -396,4 +407,49 @@ export function updateObjects(step, frameIndex) {
             }
         }
     }
+
+    if (frameIndex != 0) return;
+
+        // flyer part
+    let flyers = gameResult.steps[step].flyers;
+    for (var seq in flyers){
+        let flyer = flyers[seq];
+        let flyerObject = objects.Flyer.getFlyerBySeq(seq);
+        if (flyerObject == null){
+            let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
+            let vector_x = (flyer.targetX - flyer.originX)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2));
+            let vector_y = (flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2));
+            if (flyer.targetX - flyer.originX < 0)
+                degree = Math.PI - degree;
+            flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
+            objects.Flyer.register(flyerObject);
+        }else{
+            flyerObject.x = flyer.px;
+            flyerObject.y = flyer.py;
+            flyerObject.X = flyer.x;
+            flyerObject.Y = flyer.y;
+            if (flyer.status == 2)
+                flyerObject.finish();
+        }
+    }
 }
+
+// export function updateFlyers(step, frameIndex) {
+//     if (step >= gameResult.totalSteps || step < 0 || (step == gameResult.totalSteps-1 && frameIndex != 0))
+//         return;
+
+//     // flyer part
+//     let flyers = gameResult.steps[step].flyers;
+//     for (var seq in flyers){
+//         let flyer = flyers[seq];
+//         // if (flyer.status == 2)
+//         //     drawGif(initImage("images/attack.png"), flyer.px/gridSize, flyer.py/gridSize, 15, gridSize, 15, 1);
+//         // else{
+//             let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
+//             if (flyer.targetX - flyer.originX < 0)
+//                 degree = Math.PI - degree;
+//             drawImage(initImage("images/flyer.png"), flyer.px/gridSize, flyer.py/gridSize, degree);
+
+//         // }
+//     }
+// }
