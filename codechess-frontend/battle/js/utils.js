@@ -300,16 +300,16 @@ export function renderDebug(currentFrame, step) {
     if (!isDebug) {
         return;
     }
-    ctx.fillStyle = "rgb(250, 250, 250)";
-    ctx.font = 32*0.4 + "px Helvetica";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText("x: " + mousex, 32, 32);
-    ctx.fillText("y: " + mousey, 32*2.2, 32);
-    ctx.fillText("X: " + mouseX, 32, 32*1.5);
-    ctx.fillText("Y: " + mouseY, 32*2.2, 32*1.5);
-    ctx.fillText("Step: " + step, 32, 32*2);
-    ctx.fillText("Frame: " + currentFrame, 32, 32*2.5);
+    mouseCtx.fillStyle = "rgb(250, 250, 250)";
+    mouseCtx.font = 32*0.4 + "px Helvetica";
+    mouseCtx.textAlign = "left";
+    mouseCtx.textBaseline = "top";
+    mouseCtx.fillText("x: " + mousex, 32, 32);
+    mouseCtx.fillText("y: " + mousey, 32*2.2, 32);
+    mouseCtx.fillText("X: " + mouseX, 32, 32*1.5);
+    mouseCtx.fillText("Y: " + mouseY, 32*2.2, 32*1.5);
+    mouseCtx.fillText("Step: " + step, 32, 32*2);
+    mouseCtx.fillText("Frame: " + currentFrame, 32, 32*2.5);
 }
 
 export function renderMouse() {
