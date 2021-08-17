@@ -54,7 +54,6 @@ let main = function () {
         }
         stepInfo.innerText = seekBar.value + "/" + gameResult.steps.length;
     } else if (playButton.value == "pause" && delta > fpsInterval) {
-        objects.Object.render();
         utils.renderMouse();
         utils.renderDebug(currentFrame, step);
         then = now - delta % fpsInterval;
@@ -81,6 +80,7 @@ utils.startAndGet().then((data) => {
     };
     seekBar.oninput = () => {
         inControl = true;
+        objects.Object.clear();
         utils.updateObjects(seekBar.value, 0);
         objects.Object.render();
         utils.renderDebug(0, seekBar.value);

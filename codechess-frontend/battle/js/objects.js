@@ -34,6 +34,14 @@ export class Object {
 
     static maxGettableLayer = 3;
 
+    static clear() {
+        for (var i in this.objectMap){
+            if (i < this.maxGettableLayer) continue;
+            for (var j in this.objectMap[i])
+                delete this.objectMap[i][j];
+        }
+    }
+
     static register(o) {
         // o.seq = Object.currentSeq++;
         if (!(this.layerIndex in this.objectMap)){
@@ -99,12 +107,12 @@ class Effect extends Object {
 
     draw() {
         if (this.status == 0) {
-            utils.printAction(this.id,"释放技能" + "<span class='highlight'>" + this.name + "</span>");
+            // utils.printAction(this.id,"释放技能" + "<span class='highlight'>" + this.name + "</span>");
             this.status = 1;
         }
         if (this.status == 1 && this.image.finished) {
             this.status = 2;
-            utils.printAction(this.id,"结束" + "<span class='highlight'>" + this.name + "</span>");
+            // utils.printAction(this.id,"结束" + "<span class='highlight'>" + this.name + "</span>");
             delete Object.objectMap[Effect.layerIndex][this.seq];
         }
     }
