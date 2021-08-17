@@ -181,7 +181,7 @@ function initStats() {
     stats.appendChild(status);
 }
 
-var canvas, ctx, mouseCanvas, mouseCtx;
+var canvasWrapper, canvas, ctx, mouseCanvas, mouseCtx;
 
 let mousex = -1;
 let mousey = -1;
@@ -189,18 +189,22 @@ let mouseX = -1;
 let mouseY = -1;
 
 function initCanvas(width, height) {
+    canvasWrapper = document.createElement("div");
+    canvasWrapper.id = "canvasWrapper";
+    wrapper.appendChild(canvasWrapper);
+
     canvas = document.createElement("canvas");
     canvas.id = "map";
     canvas.width = width;
     canvas.height = height;
-    wrapper.appendChild(canvas);
+    canvasWrapper.appendChild(canvas);
     ctx = canvas.getContext("2d");
 
     mouseCanvas = document.createElement("canvas");
     mouseCanvas.id = "mouseLayer";
     mouseCanvas.width = width;
     mouseCanvas.height = height;
-    wrapper.appendChild(mouseCanvas);
+    canvasWrapper.appendChild(mouseCanvas);
     mouseCtx = mouseCanvas.getContext("2d");
     
     mouseCanvas.onmousemove = e => {

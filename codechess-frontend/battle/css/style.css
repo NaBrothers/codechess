@@ -10,6 +10,13 @@
     display: flex;
 }
 
+#canvasWrapper {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: calc(32*24px);
+}
+
 #map {
     position: absolute; 
     left: 0; 
