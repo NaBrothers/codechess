@@ -36,6 +36,10 @@ public class BattleContext extends Context{
         rooney.setX(4);
         rooney.setY(20);
         playerMap.put(rooney.getSeq(), rooney);
+        Player monster = new Player(777);
+        monster.setX(20);
+        monster.setY(4);
+        playerMap.put(monster.getSeq(), monster);
     }
 
     @Override
@@ -50,10 +54,12 @@ public class BattleContext extends Context{
 
     @Override
     protected boolean doStep() {
-        Random rand = new Random();
         Player rooney = (Player)playerMap.values().toArray()[0];
-        rooney.moveTo(20, 4);
-        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 2));
+        Player monster = (Player)playerMap.values().toArray()[1];
+        rooney.cast(new Flyer(999, monster.getX(), monster.getY(), 4, 4, 4));
+        monster.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 4));
+        rooney.moveTo(20, 20);
+        monster.moveTo(4, 4);
         Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Long, Flyer> entry = it.next();
