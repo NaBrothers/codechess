@@ -36,7 +36,7 @@ export class Object {
 
     static clear() {
         for (var i in this.objectMap){
-            if (i < this.maxGettableLayer) continue;
+            if (i <= this.maxGettableLayer) continue;
             for (var j in this.objectMap[i])
                 delete this.objectMap[i][j];
         }
