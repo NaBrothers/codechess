@@ -32,6 +32,8 @@ public class Flyer extends Effect implements Movable{
         this.speed = speed;
         this.px = BattleUtils.toPx(ox);
         this.py = BattleUtils.toPx(oy);
+        this.x = ox;
+        this.y = oy;
     }
 
 
@@ -69,9 +71,13 @@ public class Flyer extends Effect implements Movable{
     @Override
     public boolean cast() {
         if (status == EffectStatus.CREATE.getCode()) {
-            status = EffectStatus.START.getCode();
             BattleContext context = ContextUtils.get("context");
-            context.getFlyerMap().put(seq, this);
+            if (context.getFlyerMap().containsKey(seq)) {
+                status = EffectStatus.START.getCode();
+            } else {
+                context.getFlyerMap().put(seq, this);
+            }
+            return true;
         }
         if (status == EffectStatus.FINISH.getCode()) {
             return false;
