@@ -56,8 +56,8 @@ public class BattleContext extends Context{
     protected boolean doStep() {
         Player rooney = (Player)playerMap.values().toArray()[0];
         Player monster = (Player)playerMap.values().toArray()[1];
-        rooney.cast(new Flyer(999, monster.getX(), monster.getY(), 4, 4, 4));
-        monster.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 4));
+        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), rooney.getX(), rooney.getY(), 4));
+        monster.cast(new Flyer(999, monster.getX(), monster.getY(), monster.getX(), monster.getY(), 4));
         rooney.moveTo(20, 20);
         monster.moveTo(4, 4);
         Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
