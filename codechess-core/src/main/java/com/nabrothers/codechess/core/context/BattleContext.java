@@ -32,13 +32,25 @@ public class BattleContext extends Context{
 
     // Mock
     {
-        Player rooney = new Player(888);
-        rooney.setX(4);
-        rooney.setY(20);
-        playerMap.put(rooney.getSeq(), rooney);
+        Player rooney1 = new Player(881);
+        rooney1.setX(4);
+        rooney1.setY(4);
+        playerMap.put(rooney1.getSeq(), rooney1);
+        Player rooney2 = new Player(882);
+        rooney2.setX(4);
+        rooney2.setY(20);
+        playerMap.put(rooney2.getSeq(), rooney2);
+        Player rooney3 = new Player(883);
+        rooney3.setX(20);
+        rooney3.setY(4);
+        playerMap.put(rooney3.getSeq(), rooney3);
+        Player rooney4 = new Player(884);
+        rooney4.setX(20);
+        rooney4.setY(20);
+        playerMap.put(rooney4.getSeq(), rooney4);
         Player monster = new Player(777);
-        monster.setX(20);
-        monster.setY(4);
+        monster.setX(12);
+        monster.setY(12);
         playerMap.put(monster.getSeq(), monster);
     }
 
@@ -54,12 +66,33 @@ public class BattleContext extends Context{
 
     @Override
     protected boolean doStep() {
-        Player rooney = (Player)playerMap.values().toArray()[0];
-        Player monster = (Player)playerMap.values().toArray()[1];
-        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), monster.getX(), monster.getY(), 4));
-        monster.cast(new Flyer(999, monster.getX(), monster.getY(), rooney.getX(), rooney.getY(), 4));
-        rooney.moveTo(20, 20);
-        monster.moveTo(4, 4);
+        Player monster = null;
+        for (Player p : playerMap.values()) {
+            if (p.getId() == 777) {
+                monster = p;
+                break;
+            }
+        }
+        Random random = new Random();
+        switch (random.nextInt(4)) {
+            case 0:
+                monster.move(1, 0);
+                break;
+            case 1:
+                monster.move(0, 1);
+                break;
+            case 2:
+                monster.move(-1, 0);
+                break;
+            case 3:
+                monster.move(0, -1);
+                break;
+        }
+        for (Player rooney : playerMap.values()) {
+            if (rooney.getId() != 777) {
+                rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), monster.getX(), monster.getY(), 2));
+            }
+        }
         Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Long, Flyer> entry = it.next();
