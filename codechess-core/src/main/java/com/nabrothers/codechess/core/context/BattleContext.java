@@ -52,8 +52,8 @@ public class BattleContext extends Context{
     protected boolean doStep() {
         Random rand = new Random();
         Player rooney = (Player)playerMap.values().toArray()[0];
-        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 2));
         rooney.moveTo(20, 4);
+        rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), 4, 4, 2));
         Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Long, Flyer> entry = it.next();
