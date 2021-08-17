@@ -57,6 +57,12 @@ public class Flyer extends Effect implements Movable{
         double normalize = Math.sqrt(vpx * vpx + vpy * vpy);
         int dpx = (int) Math.floor(vpx * pSpeed / normalize);
         int dpy = (int) Math.floor(vpy * pSpeed / normalize);
+        if (Math.abs(dpx) > Math.abs(vpx)) {
+            dpx = vpx;
+        }
+        if (Math.abs(dpy) > Math.abs(vpy)) {
+            dpy = vpy;
+        }
         return move(dpx, dpy);
     }
 
@@ -64,7 +70,7 @@ public class Flyer extends Effect implements Movable{
     public boolean cast() {
         if (status == EffectStatus.CREATE.getCode()) {
             status = EffectStatus.START.getCode();
-            BattleContext context = (BattleContext)ContextUtils.get("context");
+            BattleContext context = ContextUtils.get("context");
             context.getFlyerMap().put(seq, this);
         }
         if (status == EffectStatus.FINISH.getCode()) {
