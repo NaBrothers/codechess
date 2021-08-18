@@ -83,6 +83,7 @@ utils.startAndGet().then((data) => {
         objects.Object.clear();
         utils.updateObjects(seekBar.value, 0);
         objects.Object.render();
+        utils.renderMouse();
         utils.renderDebug(0, seekBar.value);
         stepInfo.innerText = seekBar.value + "/" + gameResult.steps.length;
     }

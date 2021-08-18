@@ -41,7 +41,8 @@ export function drawFill(color, X, Y, context=ctx) {
     context.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
 }
 
-export function drawGif(image, X, Y, frames, size, duration = frame, count = 1) {
+function drawGif(image, X, Y, frames, size, duration = frame, count = 1) {
+    duration /= multiple;
     if (image.frame == undefined) {
         image.frame = 0;
         image.count = count;
@@ -65,13 +66,17 @@ export function drawGif(image, X, Y, frames, size, duration = frame, count = 1) 
     }
 }
 
+export function drawAttack(attack) {
+    drawGif(attack.image, attack.X, attack.Y, attack.frames, attack.size, attack.duration, 1);
+}
+
 export function drawFlyer(flyer) {
     if (flyer.image.finished == undefined){
         flyer.image.finished = false;
         flyer.count = 0;
     }
-    flyer.x += flyer.vector.x * flyer.speed;
-    flyer.y += flyer.vector.y * flyer.speed;
+    flyer.x += flyer.vector.x * flyer.speed * multiple;
+    flyer.y += flyer.vector.y * flyer.speed * multiple;
     let degree;
     if (flyer.vector.x >= 0)
         degree = Math.asin(flyer.vector.y);
@@ -419,10 +424,9 @@ export function updateObjects(step, frameIndex) {
     for (var seq in flyers){
         let flyer = flyers[seq];
         let flyerObject = objects.Flyer.getFlyerBySeq(seq);
+        // console.log(flyerObject);
         if (flyerObject == null){
             let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
-            let vector_x = (flyer.targetX - flyer.originX)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2));
-            let vector_y = (flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2));
             if (flyer.targetX - flyer.originX < 0)
                 degree = Math.PI - degree;
             flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);

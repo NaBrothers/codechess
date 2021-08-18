@@ -42,6 +42,8 @@ export class Object {
         }
     }
 
+
+
     static register(o) {
         // o.seq = Object.currentSeq++;
         if (!(this.layerIndex in this.objectMap)){
@@ -116,6 +118,10 @@ class Effect extends Object {
             delete Object.objectMap[Effect.layerIndex][this.seq];
         }
     }
+
+    finish() {
+        this.image.finished = true;
+    }
 }
 
 export class Attack extends Effect {
@@ -129,7 +135,11 @@ export class Attack extends Effect {
 
     draw() {
         super.draw();
-        utils.drawGif(this.image, this.X, this.Y, this.frames, this.size, this.duration,1);
+        utils.drawAttack(this);
+    }
+
+    setDuration(duration) {
+        this.duration = duration;
     }
 }
 
@@ -154,8 +164,8 @@ export class Flyer extends Effect {
         utils.drawFlyer(this);
     }
 
-    finish() {
-        this.image.finished = true;
+    setSpeed(speed){
+        this.speed = speed;
     }
 }
 
