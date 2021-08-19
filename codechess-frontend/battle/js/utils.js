@@ -41,7 +41,7 @@ export function drawFill(color, X, Y, context=ctx) {
     context.fillRect(X2x(X),X2x(Y), gridSize , gridSize);
 }
 
-function drawGif(image, X, Y, frames, size, duration = frame, count = 1) {
+function drawGif(image, X, Y, frames, size, duration = frames, count = 1) {
     duration /= multiple;
     if (image.frame == undefined) {
         image.frame = 0;
@@ -50,14 +50,14 @@ function drawGif(image, X, Y, frames, size, duration = frame, count = 1) {
     }
     if (image.finished) return;
     let delta = frames/duration;
-    if (image.frame < duration) {
+    if (image.frame < frames) {
         let count = image.width / size;
         let sx = (Math.floor(image.frame) % count) * size;
         let sy = Math.floor(Math.floor(image.frame) / count) * size;
         ctx.drawImage(image, sx, sy, size, size, X2x(X), X2x(Y), gridSize, gridSize);
         image.frame += delta;
     }
-    if (image.frame >= duration && image.count != 0) {
+    if (image.frame >= frames && image.count != 0) {
         image.frame = 0;
         image.count--;
     }
