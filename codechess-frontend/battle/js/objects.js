@@ -189,12 +189,13 @@ class Entity extends Object {
 }
 
 export class Player extends Entity {
-    constructor(name, path, size, seq, X, Y, totalHp, hp=totalHp) {
+    constructor(name, path, size, seq, X, Y, user, totalHp, hp=totalHp) {
         super(name, path, size, seq);
         this.X = X;
         this.Y = Y;
         this.totalHp = totalHp;
         this.hp = hp;
+        this.user = user;
     }
 
     static getPlayerBySeq(seq) {
@@ -202,7 +203,8 @@ export class Player extends Entity {
     }
 
     draw() {
-        utils.drawImage(utils.initImage(redHaloImgPath), this.X, this.Y+0.35);
+        let haloImgPath = this.user == 111 ? redHaloImgPath : blueHaloImgPath;
+        utils.drawImage(utils.initImage(haloImgPath), this.X, this.Y+0.35);
         super.draw();
         
         // console.log("x: "+this.X+" y: "+this.Y);
