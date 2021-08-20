@@ -14,7 +14,7 @@ import * as objects from './objects.js'
 // const treeImgPath = "images/tree.png";
 // const heroImgPath = "images/hero.png";
 // const gameUrl = "http://codechess.online:8081/battle"
-import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl} from './const.js'
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, monsterImgPath} from './const.js'
 
 export var multiple = 1;
 
@@ -87,7 +87,8 @@ export function drawFlyer(flyer) {
         flyer.count++;
     } else {
         // flyer.image.finished = true;
-        let ack = new objects.Attack("击中", "images/attack.png", gridSize, flyer.seq, flyer.id, flyer.X, flyer.Y, 15, 15);
+        let png = flyer.path == "images/flyer.png" ? "images/attack.png" : "images/attack3.png"
+        let ack = new objects.Attack("击中", png, gridSize, flyer.seq, flyer.id, flyer.X, flyer.Y, 15, 15);
         objects.Attack.register(ack);
 
     }
@@ -427,7 +428,7 @@ export function updateObjects(step, frameIndex) {
         if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
-                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
+                player = new objects.Player(lastPlayers[seq].id, lastPlayers[seq].userId==111?heroImgPath:monsterImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
                 objects.Player.register(player);
             }
             player.status = lastPlayers[seq].status;
@@ -441,7 +442,7 @@ export function updateObjects(step, frameIndex) {
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
                 if (player == null){
-                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
+                    player = new objects.Player(lastPlayers[seq].id, lastPlayers[seq].userId==111?heroImgPath:monsterImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
                     objects.Player.register(player);
                 }
                 player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
@@ -465,7 +466,10 @@ export function updateObjects(step, frameIndex) {
             let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
             if (flyer.targetX - flyer.originX < 0)
                 degree = Math.PI - degree;
-            flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
+            if (objects.Player.getPlayerBySeq(flyer.owner).userId == 111)
+                flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
+            else
+                flyerObject = new objects.Flyer("飞行", "images/wind.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
             objects.Flyer.register(flyerObject);
         }else{
             flyerObject.x = flyer.px;

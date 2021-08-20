@@ -13,10 +13,12 @@ const isDebug = true;
 const grassImgPath = "images/grass.png";
 const treeImgPath = "images/tree.png";
 const heroImgPath = "images/hero.png";
+const monsterImgPath = "images/monster.png"
 
 const gameUrl = "http://codechess.online:8081/battle";
+// const gameUrl = "localhost:8081/battle";
 
 const redHaloImgPath = "images/halo_red.png"
 const blueHaloImgPath = "images/halo_blue.png"
 
-export {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, redHaloImgPath, blueHaloImgPath};
+export {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, monsterImgPath, gameUrl, redHaloImgPath, blueHaloImgPath};
