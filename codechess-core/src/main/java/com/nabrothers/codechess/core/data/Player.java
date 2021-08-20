@@ -11,6 +11,10 @@ public class Player extends Entity implements Movable, Effectable{
         super(id, ObjectType.PLAYER.getCode());
     }
 
+    private int hp;
+
+    private long userId;
+
     @Override
     public boolean move(int dx, int dy) {
         if (dx != 0 && dy != 0) {
@@ -37,5 +41,21 @@ public class Player extends Entity implements Movable, Effectable{
     @Override
     public boolean cast(Effect e) {
         return e.cast();
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

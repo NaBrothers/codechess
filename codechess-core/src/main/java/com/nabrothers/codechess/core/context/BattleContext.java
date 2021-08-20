@@ -35,22 +35,32 @@ public class BattleContext extends Context{
         Player rooney1 = new Player(881);
         rooney1.setX(4);
         rooney1.setY(4);
+        rooney1.setHp(100);
+        rooney1.setUserId(111);
         playerMap.put(rooney1.getSeq(), rooney1);
         Player rooney2 = new Player(882);
         rooney2.setX(4);
         rooney2.setY(20);
+        rooney2.setHp(100);
+        rooney2.setUserId(111);
         playerMap.put(rooney2.getSeq(), rooney2);
         Player rooney3 = new Player(883);
         rooney3.setX(20);
         rooney3.setY(4);
+        rooney3.setHp(100);
+        rooney3.setUserId(111);
         playerMap.put(rooney3.getSeq(), rooney3);
         Player rooney4 = new Player(884);
         rooney4.setX(20);
         rooney4.setY(20);
+        rooney4.setHp(100);
+        rooney4.setUserId(111);
         playerMap.put(rooney4.getSeq(), rooney4);
         Player monster = new Player(777);
         monster.setX(12);
         monster.setY(12);
+        monster.setHp(100);
+        monster.setUserId(222);
         playerMap.put(monster.getSeq(), monster);
     }
 
