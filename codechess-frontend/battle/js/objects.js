@@ -1,5 +1,5 @@
 import * as utils from './utils.js'
-import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl} from './const.js'
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, redHaloImgPath, blueHaloImgPath} from './const.js'
 
 utils.init();
 
@@ -20,6 +20,7 @@ export class Object {
         this.X = 0;
         this.Y = 0;
         this.name = name;
+        this.path = path;
         this.image = utils.initImage(path);
         this.size = size;
 
@@ -201,6 +202,7 @@ export class Player extends Entity {
     }
 
     draw() {
+        utils.drawImage(utils.initImage(redHaloImgPath), this.X, this.Y+0.4);
         super.draw();
         
         // console.log("x: "+this.X+" y: "+this.Y);

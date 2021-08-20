@@ -16,4 +16,7 @@ const heroImgPath = "images/hero.png";
 
 const gameUrl = "http://codechess.online:8081/battle";
 
-export {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl};
+const redHaloImgPath = "images/halo_red.png"
+const blueHaloImgPath = "images/halo_blue.png"
+
+export {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, redHaloImgPath, blueHaloImgPath};

@@ -103,7 +103,7 @@ export function drawBlood(player) {
 
 export function showDetail(object) {
     detail.innerHTML = "";
-    // object.image.style="width:50px;height:50px";
+    object.image.style="width:50px;height:50px";
     object.image.draggable="true";
     detail.appendChild(object.image);
     detail.innerHTML += "<span style='margin: 5px'>" + object.name + "</span st>";
@@ -301,6 +301,39 @@ function initPanel() {
     panel.appendChild(logger);
 }
 
+var statusBarMap = {};
+
+function addPlayerStatus(player) {
+    let statusBar = document.createElement("div");
+    statusBar.id = "statusBar" + player.seq;
+    status.appendChild(statusBar);
+    $('#'+statusBar.id).load('./html/statusBar.html', () => {
+        $('#'+statusBar.id).children(".superDiv").children(".picture").attr({
+            "src": player.path
+        });
+        $('#'+statusBar.id).children(".superDiv").children(".picture").css({
+            "border-style": "solid",
+            "border-width": "2px",
+            "border-color": "#ff0000"
+        })
+        $('#'+statusBar.id).children(".superDiv").children(".realBlood").css({
+            "width" : player.hp / player.totalHp * 200
+        });
+    });
+    statusBarMap[player.seq] = statusBar;
+}
+
+function setPlayerStatus(player) {
+    if (player.seq in statusBarMap){
+        let statusBar = statusBarMap[player.seq];
+        $('#'+statusBar.id).children(".superDiv").children(".realBlood").css({
+            "width" : player.hp / player.totalHp * 200
+        })
+    } else {
+        addPlayerStatus(player);
+    }
+}
+
 export function renderDebug(currentFrame, step) {
     if (!isDebug) {
         return;
@@ -396,7 +429,7 @@ export function updateObjects(step, frameIndex) {
         if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
-                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
+                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 60);
                 objects.Player.register(player);
             }
             player.X = lastPlayers[seq].x;
@@ -408,13 +441,16 @@ export function updateObjects(step, frameIndex) {
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
                 if (player == null){
-                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 100);
+                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 60);
                     objects.Player.register(player);
                 }
                 player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
                 player.Y = lastPlayers[seq].y + (nextPlayers[seq].y - lastPlayers[seq].y) * frameIndex / Math.floor(frame / multiple);
             }
         }
+        //status
+        let player = objects.Player.getPlayerBySeq(seq);
+        setPlayerStatus(player);
     }
 
     if (frameIndex != 0) return;
@@ -440,6 +476,7 @@ export function updateObjects(step, frameIndex) {
                 flyerObject.finish();
         }
     }
+
 }
 
 // export function updateFlyers(step, frameIndex) {
