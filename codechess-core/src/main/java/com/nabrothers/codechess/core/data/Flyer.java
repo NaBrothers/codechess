@@ -67,6 +67,30 @@ public class Flyer extends Effect implements Movable{
         if (Math.abs(dpy) > Math.abs(vpy)) {
             dpy = vpy;
         }
+        boolean res = move(dpx, dpy);
+        if (x == targetX && y == targetY) {
+            finish();
+        }
+        return res;
+    }
+
+    public boolean move(boolean shouldStop) {
+        if (shouldStop) {
+            return moveTo(targetX, targetY);
+        }
+        int tx = BattleUtils.toPx(targetX);
+        int ty = BattleUtils.toPx(targetY);
+        int ox = BattleUtils.toPx(originX);
+        int oy = BattleUtils.toPx(originY);
+        int pSpeed = BattleUtils.toPx(speed);
+        int vpx = tx - ox;
+        int vpy = ty - oy;
+        if (vpx == 0 && vpy == 0) {
+            return true;
+        }
+        double normalize = Math.sqrt(vpx * vpx + vpy * vpy);
+        int dpx = (int) Math.floor(vpx * pSpeed / normalize);
+        int dpy = (int) Math.floor(vpy * pSpeed / normalize);
         return move(dpx, dpy);
     }
 
@@ -84,10 +108,7 @@ public class Flyer extends Effect implements Movable{
         if (status == EffectStatus.FINISH.getCode()) {
             return false;
         }
-        moveTo(targetX, targetY);
-        if (x == targetX && y == targetY) {
-            finish();
-        }
+        move(false);
         return true;
     }
 
