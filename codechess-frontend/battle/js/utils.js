@@ -94,6 +94,7 @@ export function drawFlyer(flyer) {
 }
 
 export function drawBlood(player) {
+    if (player.status != 0) return;
     let length = gridSize * 0.9;
     ctx.fillStyle = "rgb(255, 0, 0)";
     ctx.fillRect(X2x(player.X) + gridSize * 0.05, X2x(player.Y) - gridSize * 0.3, length, gridSize * 0.18);
