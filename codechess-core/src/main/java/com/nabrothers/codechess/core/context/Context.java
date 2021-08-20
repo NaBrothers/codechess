@@ -13,7 +13,7 @@ public abstract class Context {
 
     protected int status;
 
-    private static final int MAX_STEPS = 5000;
+    private static final int MAX_STEPS = 500;
 
     public void start() {
         if (status != ContextStatus.CREATE.getCode()) {

@@ -8,4 +8,5 @@ public class BattleRecordPO {
     private Integer status;
     private Long updateTime;
     private String result;
+    private Long winner;
 }

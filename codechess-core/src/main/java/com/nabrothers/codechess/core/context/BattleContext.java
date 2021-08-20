@@ -11,6 +11,7 @@ import com.nabrothers.codechess.core.dto.BattleContextDTO;
 import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.enums.PlayerStatus;
+import com.nabrothers.codechess.core.manager.BattleConfigManager;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
 import com.nabrothers.codechess.core.utils.BattleUtils;
@@ -35,35 +36,41 @@ public class BattleContext extends Context{
     // Mock
     {
         Player rooney1 = new Player(881);
-        rooney1.setX(4);
-        rooney1.setY(4);
-        rooney1.setHp(100);
+        rooney1.setX(3);
+        rooney1.setY(20);
+        rooney1.setHp(20);
         rooney1.setUserId(111);
         playerMap.put(rooney1.getSeq(), rooney1);
         Player rooney2 = new Player(882);
-        rooney2.setX(4);
+        rooney2.setX(5);
         rooney2.setY(20);
-        rooney2.setHp(100);
+        rooney2.setHp(20);
         rooney2.setUserId(111);
         playerMap.put(rooney2.getSeq(), rooney2);
         Player rooney3 = new Player(883);
-        rooney3.setX(20);
-        rooney3.setY(4);
-        rooney3.setHp(100);
+        rooney3.setX(3);
+        rooney3.setY(18);
+        rooney3.setHp(20);
         rooney3.setUserId(111);
         playerMap.put(rooney3.getSeq(), rooney3);
-        Player rooney4 = new Player(884);
-        rooney4.setX(20);
-        rooney4.setY(20);
-        rooney4.setHp(100);
-        rooney4.setUserId(111);
-        playerMap.put(rooney4.getSeq(), rooney4);
-        Player monster = new Player(777);
-        monster.setX(12);
-        monster.setY(12);
-        monster.setHp(20);
-        monster.setUserId(222);
-        playerMap.put(monster.getSeq(), monster);
+        Player monster1 = new Player(771);
+        monster1.setX(20);
+        monster1.setY(3);
+        monster1.setHp(20);
+        monster1.setUserId(222);
+        playerMap.put(monster1.getSeq(), monster1);
+        Player monster2 = new Player(773);
+        monster2.setX(18);
+        monster2.setY(3);
+        monster2.setHp(20);
+        monster2.setUserId(222);
+        playerMap.put(monster2.getSeq(), monster2);
+        Player monster3 = new Player(773);
+        monster3.setX(20);
+        monster3.setY(5);
+        monster3.setHp(20);
+        monster3.setUserId(222);
+        playerMap.put(monster3.getSeq(), monster3);
     }
 
     @Override
@@ -78,31 +85,49 @@ public class BattleContext extends Context{
 
     @Override
     protected boolean doStep() {
-        Player monster = null;
         for (Player p : playerMap.values()) {
-            if (p.getId() == 777) {
-                monster = p;
-                break;
+            boolean isValid = false;
+            while (!isValid) {
+                Random random = new Random();
+                int dx = 0, dy = 0;
+                switch (random.nextInt(4)) {
+                    case 0:
+                        dx = 1; dy = 0;
+                        break;
+                    case 1:
+                        dx = 0; dy = 1;
+                        break;
+                    case 2:
+                        dx = -1; dy = 0;
+                        break;
+                    case 3:
+                        dx = 0; dy = -1;
+                        break;
+                }
+                int nx = p.getX() + dx;
+                int ny = p.getY() + dy;
+                if (nx > 0 && nx < BattleConfigManager.GRID_X - 1 && ny > 0 && ny < BattleConfigManager.GRID_Y - 1) {
+                    for (Player p2 : playerMap.values()) {
+                        if (BattleUtils.isSameGrid(p, p2)) {
+                            break;
+                        }
+                    }
+                    isValid = true;
+                    p.move(dx, dy);
+                }
             }
         }
-        Random random = new Random();
-        switch (random.nextInt(4)) {
-            case 0:
-                monster.move(1, 0);
-                break;
-            case 1:
-                monster.move(0, 1);
-                break;
-            case 2:
-                monster.move(-1, 0);
-                break;
-            case 3:
-                monster.move(0, -1);
-                break;
-        }
+
         for (Player rooney : playerMap.values()) {
-            if (rooney.getId() != 777) {
-                rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), monster.getX(), monster.getY(), 2, 1));
+            Player target = null;
+            for (Player enemy : playerMap.values()) {
+                if (enemy.getStatus() != PlayerStatus.DEAD.getCode() && enemy.getUserId() != rooney.getUserId()) {
+                    target = enemy;
+                    continue;
+                }
+            }
+            if (target != null) {
+                rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), target.getX(), target.getY(), 2, 1));
             }
         }
 
@@ -131,10 +156,19 @@ public class BattleContext extends Context{
         }
 
         saveStep();
-        if (currentStep > 100) {
-            return false;
+
+        Set<Long> team = new HashSet<>();
+        for (Player p: playerMap.values()) {
+            if (p.getStatus() != PlayerStatus.DEAD.getCode()) {
+                team.add(p.getUserId());
+            }
         }
-        return true;
+
+        if (team.size() > 1) {
+            return true;
+        } else {
+            return !flyerMap.isEmpty();
+        }
     }
 
     @Override
@@ -144,6 +178,18 @@ public class BattleContext extends Context{
         record.setId(id);
         record.setStatus(status);
         record.setResult(JSON.toJSONString(history, SerializerFeature.DisableCircularReferenceDetect));
+
+        Set<Long> team = new HashSet<>();
+        for (Player p: playerMap.values()) {
+            if (p.getStatus() != PlayerStatus.DEAD.getCode()) {
+                team.add(p.getUserId());
+            }
+        }
+
+        if (team.size() == 1) {
+            record.setWinner(team.iterator().next());
+        }
+
         battleRecordDAO.update(record);
     }
 

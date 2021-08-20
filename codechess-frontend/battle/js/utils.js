@@ -408,7 +408,7 @@ async function getGameResult(id) {
             }).done(
                 () => {resolve(resJSON);}
             );
-        }, 1000);
+        }, 2000);
     });
 }
 

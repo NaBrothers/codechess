@@ -4,6 +4,7 @@ import com.nabrothers.codechess.core.context.BattleContext;
 import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
 import com.nabrothers.codechess.core.enums.PlayerStatus;
+import com.nabrothers.codechess.core.manager.BattleConfigManager;
 import com.nabrothers.codechess.core.utils.BattleUtils;
 import com.nabrothers.codechess.core.utils.ContextUtils;
 
@@ -91,7 +92,11 @@ public class Flyer extends Effect implements Movable{
         double normalize = Math.sqrt(vpx * vpx + vpy * vpy);
         int dpx = (int) Math.floor(vpx * pSpeed / normalize);
         int dpy = (int) Math.floor(vpy * pSpeed / normalize);
-        return move(dpx, dpy);
+        boolean res = move(dpx, dpy);
+        if (x <= 0 || x >= BattleConfigManager.GRID_X - 1 || y <= 0 || y >= BattleConfigManager.GRID_Y - 1) {
+            finish();
+        }
+        return res;
     }
 
     @Override
