@@ -14,7 +14,7 @@ const grassImgPath = "images/grass.png";
 const treeImgPath = "images/tree.png";
 const heroImgPath = "images/hero.png";
 
-const gameUrl = "http://localhost:8081/battle";
+const gameUrl = "http://codechess.online:8081/battle";
 
 const redHaloImgPath = "images/halo_red.png"
 const blueHaloImgPath = "images/halo_blue.png"
