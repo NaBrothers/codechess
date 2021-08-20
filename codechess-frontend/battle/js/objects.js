@@ -202,7 +202,7 @@ export class Player extends Entity {
     }
 
     draw() {
-        utils.drawImage(utils.initImage(redHaloImgPath), this.X, this.Y+0.4);
+        utils.drawImage(utils.initImage(redHaloImgPath), this.X, this.Y+0.35);
         super.draw();
         
         // console.log("x: "+this.X+" y: "+this.Y);

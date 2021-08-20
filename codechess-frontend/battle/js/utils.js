@@ -308,6 +308,7 @@ function addPlayerStatus(player) {
     statusBar.id = "statusBar" + player.seq;
     status.appendChild(statusBar);
     $('#'+statusBar.id).load('./html/statusBar.html', () => {
+        $('#'+statusBar.id).children(".superDiv").children(".name").text(player.name);
         $('#'+statusBar.id).children(".superDiv").children(".picture").attr({
             "src": player.path
         });
@@ -315,10 +316,11 @@ function addPlayerStatus(player) {
             "border-style": "solid",
             "border-width": "2px",
             "border-color": "#ff0000"
-        })
+        });
         $('#'+statusBar.id).children(".superDiv").children(".realBlood").css({
             "width" : player.hp / player.totalHp * 200
         });
+        $('#'+statusBar.id).children(".superDiv").children(".blood").text(player.hp+"/"+player.totalHp);
     });
     statusBarMap[player.seq] = statusBar;
 }
@@ -328,7 +330,8 @@ function setPlayerStatus(player) {
         let statusBar = statusBarMap[player.seq];
         $('#'+statusBar.id).children(".superDiv").children(".realBlood").css({
             "width" : player.hp / player.totalHp * 200
-        })
+        });
+        $('#'+statusBar.id).children(".superDiv").children(".blood").text(player.hp+"/"+player.totalHp);
     } else {
         addPlayerStatus(player);
     }
@@ -429,9 +432,10 @@ export function updateObjects(step, frameIndex) {
         if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
-                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 60);
+                player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].hp, lastPlayers[seq].hp);
                 objects.Player.register(player);
             }
+            player.hp = lastPlayers[seq].hp;
             player.X = lastPlayers[seq].x;
             player.Y = lastPlayers[seq].y;
         }else {
@@ -441,7 +445,7 @@ export function updateObjects(step, frameIndex) {
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
                 if (player == null){
-                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, 100, 60);
+                    player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
                     objects.Player.register(player);
                 }
                 player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
