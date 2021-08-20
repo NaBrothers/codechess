@@ -466,7 +466,7 @@ export function updateObjects(step, frameIndex) {
             let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
             if (flyer.targetX - flyer.originX < 0)
                 degree = Math.PI - degree;
-            if (objects.Player.getPlayerBySeq(flyer.owner).userId == 111)
+            if (objects.Player.getPlayerBySeq(flyer.owner).user == 111)
                 flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
             else
                 flyerObject = new objects.Flyer("飞行", "images/wind.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
