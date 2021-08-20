@@ -5,4 +5,14 @@ public class Static extends Effect{
     protected boolean cast() {
         return true;
     }
+
+    @Override
+    protected boolean addEffect(CodeObject o) {
+        return true;
+    }
+
+    @Override
+    protected boolean finish() {
+        return false;
+    }
 }

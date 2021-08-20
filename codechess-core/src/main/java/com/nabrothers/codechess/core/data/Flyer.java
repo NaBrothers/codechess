@@ -3,6 +3,7 @@ package com.nabrothers.codechess.core.data;
 import com.nabrothers.codechess.core.context.BattleContext;
 import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
+import com.nabrothers.codechess.core.enums.PlayerStatus;
 import com.nabrothers.codechess.core.utils.BattleUtils;
 import com.nabrothers.codechess.core.utils.ContextUtils;
 
@@ -23,7 +24,7 @@ public class Flyer extends Effect implements Movable{
         super(id, ObjectType.FLYER.getCode());
     }
 
-    public Flyer(int id, int ox, int oy, int tx, int ty, double speed) {
+    public Flyer(int id, int ox, int oy, int tx, int ty, double speed, int power) {
         this(id);
         this.originX = ox;
         this.originY = oy;
@@ -34,6 +35,7 @@ public class Flyer extends Effect implements Movable{
         this.py = BattleUtils.toPx(oy);
         this.x = ox;
         this.y = oy;
+        this.power = power;
     }
 
 
@@ -65,6 +67,30 @@ public class Flyer extends Effect implements Movable{
         if (Math.abs(dpy) > Math.abs(vpy)) {
             dpy = vpy;
         }
+        boolean res = move(dpx, dpy);
+        if (x == targetX && y == targetY) {
+            finish();
+        }
+        return res;
+    }
+
+    public boolean move(boolean shouldStop) {
+        if (shouldStop) {
+            return moveTo(targetX, targetY);
+        }
+        int tx = BattleUtils.toPx(targetX);
+        int ty = BattleUtils.toPx(targetY);
+        int ox = BattleUtils.toPx(originX);
+        int oy = BattleUtils.toPx(originY);
+        int pSpeed = BattleUtils.toPx(speed);
+        int vpx = tx - ox;
+        int vpy = ty - oy;
+        if (vpx == 0 && vpy == 0) {
+            return true;
+        }
+        double normalize = Math.sqrt(vpx * vpx + vpy * vpy);
+        int dpx = (int) Math.floor(vpx * pSpeed / normalize);
+        int dpy = (int) Math.floor(vpy * pSpeed / normalize);
         return move(dpx, dpy);
     }
 
@@ -82,10 +108,22 @@ public class Flyer extends Effect implements Movable{
         if (status == EffectStatus.FINISH.getCode()) {
             return false;
         }
-        moveTo(targetX, targetY);
-        if (x == targetX && y == targetY) {
-            status = EffectStatus.FINISH.getCode();
+        move(false);
+        return true;
+    }
+
+    @Override
+    public boolean addEffect(CodeObject o) {
+        if (o instanceof Player) {
+            Player p = (Player) o;
+            p.hurt(power);
         }
+        return true;
+    }
+
+    @Override
+    public boolean finish() {
+        status = EffectStatus.FINISH.getCode();
         return true;
     }
 
