@@ -196,6 +196,8 @@ export class Player extends Entity {
         this.totalHp = totalHp;
         this.hp = hp;
         this.user = user;
+        this.status = 0;
+        this.dieOri = Math.random() < 0.5;
     }
 
     static getPlayerBySeq(seq) {
@@ -205,8 +207,7 @@ export class Player extends Entity {
     draw() {
         let haloImgPath = this.user == 111 ? redHaloImgPath : blueHaloImgPath;
         utils.drawImage(utils.initImage(haloImgPath), this.X, this.Y+0.35);
-        super.draw();
-        
+        utils.drawImage(this.image, this.X, this.Y, this.status==0?0:this.dieOri?Math.PI/2:-Math.PI/2);
         // console.log("x: "+this.X+" y: "+this.Y);
     }
 

@@ -330,6 +330,15 @@ function setPlayerStatus(player) {
             "width" : player.hp / player.totalHp * 200
         });
         $('#'+statusBar.id).children(".superDiv").children(".blood").text(player.hp+"/"+player.totalHp);
+        if (player.status == 1){
+            $('#'+statusBar.id).children(".superDiv").css({
+                opacity: 0.5
+            });
+        } else {
+            $('#'+statusBar.id).children(".superDiv").css({
+                opacity: 1
+            });
+        }
     } else {
         addPlayerStatus(player);
     }
@@ -420,6 +429,7 @@ export function updateObjects(step, frameIndex) {
                 player = new objects.Player(lastPlayers[seq].id, heroImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
                 objects.Player.register(player);
             }
+            player.status = lastPlayers[seq].status;
             player.hp = lastPlayers[seq].hp;
             player.X = lastPlayers[seq].x;
             player.Y = lastPlayers[seq].y;
