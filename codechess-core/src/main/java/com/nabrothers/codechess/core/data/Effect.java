@@ -1,9 +1,11 @@
 package com.nabrothers.codechess.core.data;
 
 public abstract class Effect extends CodeObject{
-    protected CodeObject owner;
+    protected long owner;
 
     protected int status;
+
+    protected int power;
 
     protected Effect() {
         super();
@@ -13,13 +15,17 @@ public abstract class Effect extends CodeObject{
         super(id, type);
     }
 
-    public CodeObject getOwner() {
+    public long getOwner() {
         return owner;
     }
 
-    public void setOwner(CodeObject owner) {
+    public void setOwner(long owner) {
         this.owner = owner;
     }
 
     abstract protected boolean cast();
+
+    abstract protected boolean addEffect(CodeObject o);
+
+    abstract protected boolean finish();
 }

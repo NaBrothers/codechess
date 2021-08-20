@@ -3,6 +3,7 @@ package com.nabrothers.codechess.core.data;
 import com.nabrothers.codechess.core.context.BattleContext;
 import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
+import com.nabrothers.codechess.core.enums.PlayerStatus;
 import com.nabrothers.codechess.core.utils.BattleUtils;
 import com.nabrothers.codechess.core.utils.ContextUtils;
 
@@ -23,7 +24,7 @@ public class Flyer extends Effect implements Movable{
         super(id, ObjectType.FLYER.getCode());
     }
 
-    public Flyer(int id, int ox, int oy, int tx, int ty, double speed) {
+    public Flyer(int id, int ox, int oy, int tx, int ty, double speed, int power) {
         this(id);
         this.originX = ox;
         this.originY = oy;
@@ -34,6 +35,7 @@ public class Flyer extends Effect implements Movable{
         this.py = BattleUtils.toPx(oy);
         this.x = ox;
         this.y = oy;
+        this.power = power;
     }
 
 
@@ -84,8 +86,23 @@ public class Flyer extends Effect implements Movable{
         }
         moveTo(targetX, targetY);
         if (x == targetX && y == targetY) {
-            status = EffectStatus.FINISH.getCode();
+            finish();
         }
+        return true;
+    }
+
+    @Override
+    public boolean addEffect(CodeObject o) {
+        if (o instanceof Player) {
+            Player p = (Player) o;
+            p.hurt(power);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean finish() {
+        status = EffectStatus.FINISH.getCode();
         return true;
     }
 

@@ -10,8 +10,10 @@ import com.nabrothers.codechess.core.data.Player;
 import com.nabrothers.codechess.core.dto.BattleContextDTO;
 import com.nabrothers.codechess.core.enums.EffectStatus;
 import com.nabrothers.codechess.core.enums.ObjectType;
+import com.nabrothers.codechess.core.enums.PlayerStatus;
 import com.nabrothers.codechess.core.po.BattleRecordPO;
 import com.nabrothers.codechess.core.utils.ApplicationContextProvider;
+import com.nabrothers.codechess.core.utils.BattleUtils;
 import com.nabrothers.codechess.core.utils.CopyUtils;
 
 import java.util.*;
@@ -59,7 +61,7 @@ public class BattleContext extends Context{
         Player monster = new Player(777);
         monster.setX(12);
         monster.setY(12);
-        monster.setHp(100);
+        monster.setHp(20);
         monster.setUserId(222);
         playerMap.put(monster.getSeq(), monster);
     }
@@ -100,18 +102,34 @@ public class BattleContext extends Context{
         }
         for (Player rooney : playerMap.values()) {
             if (rooney.getId() != 777) {
-                rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), monster.getX(), monster.getY(), 2));
+                rooney.cast(new Flyer(999, rooney.getX(), rooney.getY(), monster.getX(), monster.getY(), 2, 1));
             }
         }
+
         Iterator<Map.Entry<Long, Flyer>> it = flyerMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Long, Flyer> entry = it.next();
             if (entry.getValue().getStatus() == EffectStatus.FINISH.getCode()) {
                 it.remove();
-                continue;
             }
-            entry.getValue().cast();
         }
+
+        for (Flyer f: flyerMap.values()) {
+            f.cast();
+            for (Player p : playerMap.values()) {
+                if (BattleUtils.isSameGrid(f, p)) {
+                    if (f.getOwner() == p.getSeq()) {
+                        continue;
+                    }
+                    f.finish();
+                    if (p.getStatus() == PlayerStatus.DEAD.getCode() || playerMap.get(f.getOwner()).getUserId() == p.getUserId()) {
+                        continue;
+                    }
+                    f.addEffect(p);
+                }
+            }
+        }
+
         saveStep();
         if (currentStep > 100) {
             return false;

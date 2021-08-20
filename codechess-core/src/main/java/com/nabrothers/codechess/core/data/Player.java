@@ -1,6 +1,7 @@
 package com.nabrothers.codechess.core.data;
 
 import com.nabrothers.codechess.core.enums.ObjectType;
+import com.nabrothers.codechess.core.enums.PlayerStatus;
 
 public class Player extends Entity implements Movable, Effectable{
     public Player() {
@@ -15,8 +16,13 @@ public class Player extends Entity implements Movable, Effectable{
 
     private long userId;
 
+    private int status;
+
     @Override
     public boolean move(int dx, int dy) {
+        if (status == PlayerStatus.DEAD.getCode()) {
+            return false;
+        }
         if (dx != 0 && dy != 0) {
             return false;
         }
@@ -30,6 +36,9 @@ public class Player extends Entity implements Movable, Effectable{
 
     @Override
     public boolean moveTo(int nx, int ny) {
+        if (status == PlayerStatus.DEAD.getCode()) {
+            return false;
+        }
         int vx = nx - x;
         int vy = ny - y;
         boolean isX = Math.abs(vx) >= Math.abs(vy);
@@ -40,7 +49,23 @@ public class Player extends Entity implements Movable, Effectable{
 
     @Override
     public boolean cast(Effect e) {
+        if (status == PlayerStatus.DEAD.getCode()) {
+            return false;
+        }
+        e.setOwner(seq);
         return e.cast();
+    }
+
+
+    public int hurt(int v) {
+        int nHp = hp - v;
+        if (nHp <= 0) {
+            hp = 0;
+            status = PlayerStatus.DEAD.getCode();
+            return status;
+        }
+        hp = nHp;
+        return status;
     }
 
     public int getHp() {
@@ -57,5 +82,13 @@ public class Player extends Entity implements Movable, Effectable{
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
