@@ -18,6 +18,7 @@ import com.nabrothers.codechess.core.utils.BattleUtils;
 import com.nabrothers.codechess.core.utils.CopyUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BattleContext extends Context{
 
@@ -120,7 +121,9 @@ public class BattleContext extends Context{
 
         for (Player rooney : playerMap.values()) {
             Player target = null;
-            for (Player enemy : playerMap.values()) {
+            List<Player> enemyList = playerMap.values().stream().collect(Collectors.toList());
+            Collections.shuffle(enemyList);
+            for (Player enemy : enemyList) {
                 if (enemy.getStatus() != PlayerStatus.DEAD.getCode() && enemy.getUserId() != rooney.getUserId()) {
                     target = enemy;
                     continue;
