@@ -81,7 +81,7 @@
 
 #stepController {
     position: relative;
-    top: 230px;
+    top: 198px;
     display: flex;
     justify-content: space-evenly;
 }
@@ -89,7 +89,7 @@
 #seekbar {
     width: 100%;
     position: relative;
-    top: 180px;
+    top: 148px;
 }
 
 #stepInfo {
@@ -161,7 +161,7 @@
 .superDiv {
     position: relative;
     height: 54px;
-    margin: 10px;
+    margin: 8px;
     border-radius: 6px;
     border-style: solid;
     border-width: 3px;

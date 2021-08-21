@@ -14,7 +14,7 @@ import * as objects from './objects.js'
 // const treeImgPath = "images/tree.png";
 // const heroImgPath = "images/hero.png";
 // const gameUrl = "http://codechess.online:8081/battle"
-import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, monsterImgPath} from './const.js'
+import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath, gameUrl, monsterImgPath, playerImgPaths} from './const.js'
 
 export var multiple = 1;
 
@@ -87,7 +87,7 @@ export function drawFlyer(flyer) {
         flyer.count++;
     } else {
         // flyer.image.finished = true;
-        let png = flyer.path == "images/flyer.png" ? "images/attack.png" : "images/attack3.png"
+        let png = "images/attack.png";
         let ack = new objects.Attack("击中", png, gridSize, flyer.seq, flyer.id, flyer.X, flyer.Y, 15, 15);
         objects.Attack.register(ack);
 
@@ -141,6 +141,7 @@ export function initMap(gridX, gridY, gridSize, treeDensity) {
 }
 
 var isInit = false;
+var playerImgMap = {};
 
 export function init() {
     if (!isInit){
@@ -149,6 +150,14 @@ export function init() {
         initStats();
         initCanvas(width, height);
         initPanel();
+
+        let length = playerImgPaths.length;
+        playerImgMap[111] = playerImgPaths[parseInt(Math.random()*length)];
+        playerImgMap[222] = playerImgPaths[parseInt(Math.random()*length)];
+        playerImgMap[333] = playerImgPaths[parseInt(Math.random()*length)];
+        playerImgMap[444] = playerImgPaths[parseInt(Math.random()*length)];
+
+
         isInit = true;
     }
 }
@@ -238,7 +247,7 @@ function initCanvas(width, height) {
     }
 }
 
-export var panel, buttonMulti, detail, logger, seekBar,settings, stepController, stepInfo, playButton;
+export var panel, buttonMulti, detail, logger, seekBar, settings, toolBar, downloadButton, uploadButton, stepController, stepInfo, playButton;
 
 function initPanel() {
     panel = document.createElement("div");
@@ -248,6 +257,17 @@ function initPanel() {
     settings = document.createElement("div");
     settings.id = "settings";
     panel.appendChild(settings);
+
+    toolBar = document.createElement("div");
+    toolBar.id = "toolBar";
+    settings.appendChild(toolBar);
+
+    downloadButton = document.createElement("embed");
+    downloadButton.src = "images/download.svg";
+    downloadButton.type = "image/svg+xml";
+    downloadButton.width = "32";
+    downloadButton.height = "32";
+    toolBar.appendChild(downloadButton);
 
     stepController = document.createElement("div");
     stepController.id = "stepController"
@@ -315,7 +335,7 @@ function addPlayerStatus(player) {
             "src": player.path
         });
         $('#'+statusBar.id).children(".superDiv").css({
-            "border-color": player.user == 111 ? "#ff0000" : "#0000ff"
+            "border-color": player.user == 111 ? "#0000ff" : player.user == 222 ? "#ff0000" : player.user == 333 ? "#ffff00" : "#00ff00"
         });
         $('#'+statusBar.id).children(".superDiv").children(".realBlood").css({
             "width" : player.hp / player.totalHp * 200
@@ -428,7 +448,7 @@ export function updateObjects(step, frameIndex) {
         if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
-                player = new objects.Player(lastPlayers[seq].id, lastPlayers[seq].userId==111?heroImgPath:monsterImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
+                player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
                 objects.Player.register(player);
             }
             player.status = lastPlayers[seq].status;
@@ -442,7 +462,7 @@ export function updateObjects(step, frameIndex) {
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
                 if (player == null){
-                    player = new objects.Player(lastPlayers[seq].id, lastPlayers[seq].userId==111?heroImgPath:monsterImgPath, gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
+                    player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
                     objects.Player.register(player);
                 }
                 player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
@@ -466,10 +486,16 @@ export function updateObjects(step, frameIndex) {
             let degree = Math.asin((flyer.targetY - flyer.originY)/Math.sqrt(Math.pow(flyer.targetX - flyer.originX, 2) + Math.pow(flyer.targetY - flyer.originY, 2)));
             if (flyer.targetX - flyer.originX < 0)
                 degree = Math.PI - degree;
+            let png;
             if (objects.Player.getPlayerBySeq(flyer.owner).user == 111)
-                flyerObject = new objects.Flyer("飞行", "images/flyer.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
+                png = "images/flyer1.png";
+            else if (objects.Player.getPlayerBySeq(flyer.owner).user == 222)
+                png = "images/flyer2.png";
+            else if (objects.Player.getPlayerBySeq(flyer.owner).user == 333)
+                png = "images/flyer3.png";
             else
-                flyerObject = new objects.Flyer("飞行", "images/wind.png", gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
+                png = "images/flyer4.png";
+            flyerObject = new objects.Flyer("飞行", png, gridSize, seq, 0, flyer.x, flyer.y, Math.cos(degree), Math.sin(degree), flyer.speed*gridSize/frame);
             objects.Flyer.register(flyerObject);
         }else{
             flyerObject.x = flyer.px;
