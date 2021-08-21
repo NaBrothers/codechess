@@ -38,7 +38,7 @@ public class BattleContext extends Context{
     {
         Player a1 = new Player(101);
         a1.setX(3);
-        a1.setY(20);
+        a1.setY(18);
         a1.setHp(20);
         a1.setUserId(111);
         playerMap.put(a1.getSeq(), a1);
@@ -50,12 +50,12 @@ public class BattleContext extends Context{
         playerMap.put(a2.getSeq(), a2);
         Player b1 = new Player(201);
         b1.setX(3);
-        b1.setY(18);
+        b1.setY(5);
         b1.setHp(20);
         b1.setUserId(222);
         playerMap.put(b1.getSeq(), b1);
         Player b2 = new Player(202);
-        b2.setX(20);
+        b2.setX(5);
         b2.setY(3);
         b2.setHp(20);
         b2.setUserId(222);
@@ -74,13 +74,13 @@ public class BattleContext extends Context{
         playerMap.put(c2.getSeq(), c2);
         Player d1 = new Player(401);
         d1.setX(18);
-        d1.setY(3);
+        d1.setY(20);
         d1.setHp(20);
         d1.setUserId(444);
         playerMap.put(d1.getSeq(), d1);
         Player d2 = new Player(402);
         d2.setX(20);
-        d2.setY(5);
+        d2.setY(18);
         d2.setHp(20);
         d2.setUserId(444);
         playerMap.put(d2.getSeq(), d2);
