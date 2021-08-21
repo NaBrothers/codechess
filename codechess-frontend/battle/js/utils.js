@@ -152,10 +152,10 @@ export function init() {
         initPanel();
 
         let length = playerImgPaths.length;
-        playerImgMap[111] = playerImgPaths[parseInt(Math.random()*length)];
-        playerImgMap[222] = playerImgPaths[parseInt(Math.random()*length)];
-        playerImgMap[333] = playerImgPaths[parseInt(Math.random()*length)];
-        playerImgMap[444] = playerImgPaths[parseInt(Math.random()*length)];
+        playerImgMap[111] = playerImgPaths[1];
+        playerImgMap[222] = playerImgPaths[2];
+        playerImgMap[333] = playerImgPaths[3];
+        playerImgMap[444] = playerImgPaths[4];
 
 
         isInit = true;

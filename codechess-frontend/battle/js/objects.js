@@ -206,7 +206,7 @@ export class Player extends Entity {
 
     draw() {
         let haloImgPath = this.user == 111 ? blueHaloImgPath : this.user == 222 ? redHaloImgPath : this.user == 333 ? yellowHaloImgPath : greenHaloImgPath;
-        utils.drawImage(utils.initImage(haloImgPath), this.X, this.Y+0.35);
+        utils.drawImage(utils.initImage(haloImgPath), this.X, this.Y+0.3);
         utils.drawImage(this.image, this.X, this.Y, this.status==0?0:this.dieOri?Math.PI/2:-Math.PI/2);
         // console.log("x: "+this.X+" y: "+this.Y);
     }
