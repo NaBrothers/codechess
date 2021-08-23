@@ -146,6 +146,7 @@ var playerImgMap = {};
 export function init() {
     if (!isInit){
         body = document.body;
+
         initWrapper();
         initStats();
         initCanvas(width, height);
@@ -247,7 +248,7 @@ function initCanvas(width, height) {
     }
 }
 
-export var panel, buttonMulti, detail, logger, seekBar, settings, toolBar, downloadButton, uploadButton, stepController, stepInfo, playButton;
+export var panel, buttonMulti, detail, logger, seekBar, settings, toolBar, downloadButton, downloadButtonWrapper, uploadButton, uploadButtonWrapper, stepController, stepInfo, playButton;
 
 function initPanel() {
     panel = document.createElement("div");
@@ -263,11 +264,35 @@ function initPanel() {
     settings.appendChild(toolBar);
 
     downloadButton = document.createElement("embed");
+    downloadButton.id = "downloadButton";
     downloadButton.src = "images/download.svg";
     downloadButton.type = "image/svg+xml";
     downloadButton.width = "32";
     downloadButton.height = "32";
     toolBar.appendChild(downloadButton);
+
+    downloadButtonWrapper = document.createElement("div");
+    downloadButtonWrapper.id = "downloadButtonWrapper";
+    downloadButtonWrapper.onclick = e => {
+        saveJSON(gameResult, "result.codechess");
+    }
+    toolBar.appendChild(downloadButtonWrapper);
+
+    uploadButton = document.createElement("embed");
+    uploadButton.id = "uploadButton";
+    uploadButton.src = "images/upload.svg";
+    uploadButton.type = "image/svg+xml";
+    uploadButton.width = "32";
+    uploadButton.height = "32";
+    toolBar.appendChild(uploadButton);
+
+    uploadButtonWrapper = document.createElement("div");
+    uploadButtonWrapper.id = "uploadButtonWrapper";
+    uploadButtonWrapper.onclick = e => {
+        uploadFile();
+        console.log("ok");
+    }
+    toolBar.appendChild(uploadButtonWrapper);
 
     stepController = document.createElement("div");
     stepController.id = "stepController"
@@ -387,7 +412,7 @@ export function renderMouse() {
     drawFill("rgb(255,183,0,0.4)", mouseX, mouseY, mouseCtx);
 }
 
-var gameResult;
+export var gameResult;
 
 async function startNewGame() {
     return new Promise((resolve, reject) => {
@@ -507,6 +532,79 @@ export function updateObjects(step, frameIndex) {
         }
     }
 
+}
+
+function saveJSON(data, filename){
+	if(!data) {
+		alert('保存的数据为空');
+		return;
+	}
+    let data2;
+	if(!filename) {
+		// filename = 'json.json'
+		alert('未命名');
+		return;
+    }
+	if(typeof data === 'object'){
+        console.log("ok");
+		data2 = JSON.stringify(data, undefined, 4)
+	}
+	var blob = new Blob([data2], {type: 'text/json'}),
+	e = document.createEvent('MouseEvents'),
+	a = document.createElement('a')
+	a.download = filename
+	a.href = window.URL.createObjectURL(blob)
+	a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+	e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+	a.dispatchEvent(e)
+}
+
+function uploadFile(){
+    var e = document.createEvent('MouseEvents'),
+    input = document.createElement('input');
+    input.type = 'file';
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    input.dispatchEvent(e);
+    $(input).change(() => {
+        check(input);
+    });
+}
+
+function check(objFile) {
+    if(objFile.value == "") {
+        alert("不能为空");
+        return false;
+    }
+
+    console.log(objFile.value); // 文件字节数
+    
+    var files = objFile.files;//获取到文件列表
+    if(files.length == 0){
+        alert('请选择文件');
+    }else{
+        var reader = new FileReader();//新建一个FileReader
+        reader.readAsText(files[0], "UTF-8");//读取文件 
+        reader.onload = function(evt){ //读取完文件之后会回来这里
+            var fileString = evt.target.result; // 读取文件内容
+            var fileJSON = $.parseJSON(fileString);
+            console.log(fileJSON);
+            gameResult = null;
+            gameResult = fileJSON;
+            objects.Object.clearAll();
+            status.innerHTML = "";
+            for (var i = 0; i < gridX; i++){
+                for (var j = 0; j < gridY; j++){
+                    let grass = new objects.Floor("草", grassImgPath, gridSize, i * gridY + j, i, j);
+                    objects.Floor.register(grass);
+                    if (i == 0||i == gridX-1||j == 0||j == gridY-1){
+                        let tree = new objects.Wall("树", treeImgPath, gridSize, i * gridY + j + gridX * gridY, i, j);
+                        objects.Wall.register(tree);
+                    }
+                }
+            }
+            updateObjects(0, 0);
+        }
+    }
 }
 
 // export function updateFlyers(step, frameIndex) {

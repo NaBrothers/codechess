@@ -43,6 +43,13 @@ export class Object {
         }
     }
 
+    static clearAll() {
+        for (var i in this.objectMap){
+            for (var j in this.objectMap[i])
+                delete this.objectMap[i][j];
+        }
+    }
+
 
 
     static register(o) {

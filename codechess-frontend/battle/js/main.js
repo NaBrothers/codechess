@@ -1,6 +1,6 @@
 import * as objects from './objects.js'
 import * as utils from './utils.js'
-import {multiple, playButton, seekBar, stepInfo} from "./utils.js"
+import {multiple, playButton, seekBar, stepInfo, gameResult} from "./utils.js"
 import {gridSize, gridX, gridY, height, width, treeDensity, frame, fps, fpsInterval, isDebug, grassImgPath, treeImgPath, heroImgPath} from './const.js'
 
 
@@ -25,7 +25,7 @@ for (var i = 0; i < gridX; i++){
 // let tree = new objects.Wall("树", treeImgPath, gridSize, 3, 3);
 // objects.Wall.register(tree);
 
-let gameResult;
+// let gameResult;
 
 
 let currentFrame = 0;
@@ -72,7 +72,7 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 // Let's play this game!
 let then = Date.now();
 utils.startAndGet().then((data) => {
-    gameResult = data;
+    // gameResult = data;
     seekBar.onclick = () => {
         step = parseInt(seekBar.value);
         currentFrame = 0;

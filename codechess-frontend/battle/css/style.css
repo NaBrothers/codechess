@@ -54,6 +54,38 @@
     height: 550px;
 }
 
+#downloadButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+}
+
+#downloadButtonWrapper {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}
+
+#uploadButton {
+    position: absolute;
+    top: 0;
+    right: 32;
+    z-index: 0;
+}
+
+#uploadButtonWrapper {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 0;
+    right: 32;
+    z-index: 1;
+}
+
 #panel {
     width: 432px;
     display: flex;
@@ -213,3 +245,4 @@
     left: 300px;
     top: 23px;
 }
+
