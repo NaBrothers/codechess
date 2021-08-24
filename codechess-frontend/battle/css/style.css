@@ -54,6 +54,12 @@
     height: 550px;
 }
 
+#toolBar {
+    display: flex;
+    justify-content: end;
+    height: 32px;
+}
+
 #downloadButton {
     position: absolute;
     top: 0;
@@ -73,7 +79,7 @@
 #uploadButton {
     position: absolute;
     top: 0;
-    right: 32;
+    right: 32px;
     z-index: 0;
 }
 
@@ -82,7 +88,7 @@
     height: 32px;
     position: absolute;
     top: 0;
-    right: 32;
+    right: 32px;
     z-index: 1;
 }
 
