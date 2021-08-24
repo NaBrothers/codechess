@@ -467,13 +467,14 @@ export function updateObjects(step, frameIndex) {
     if (step >= gameResult.totalSteps || step < 0 || (step == gameResult.totalSteps-1 && frameIndex != 0))
         return;
 
+    let zeroPlayers = gameResult.steps[0].players;
     // players part
     let lastPlayers = gameResult.steps[step].players;
     for (var seq in lastPlayers) {
         if (frameIndex == 0){
             let player = objects.Player.getPlayerBySeq(seq);
             if (player == null){
-                player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].hp, lastPlayers[seq].hp);
+                player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, zeroPlayers[seq].hp, lastPlayers[seq].hp);
                 objects.Player.register(player);
             }
             player.status = lastPlayers[seq].status;
@@ -487,7 +488,7 @@ export function updateObjects(step, frameIndex) {
             if (seq in nextPlayers){
                 let player = objects.Player.getPlayerBySeq(seq);
                 if (player == null){
-                    player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, lastPlayers[seq].totalHp, lastPlayers[seq].hp);
+                    player = new objects.Player(lastPlayers[seq].id, playerImgMap[lastPlayers[seq].userId], gridSize, seq, lastPlayers[seq].x, lastPlayers[seq].y, lastPlayers[seq].userId, zeroPlayers[seq].hp, lastPlayers[seq].hp);
                     objects.Player.register(player);
                 }
                 player.X = lastPlayers[seq].x + (nextPlayers[seq].x - lastPlayers[seq].x) * frameIndex / Math.floor(frame / multiple);
