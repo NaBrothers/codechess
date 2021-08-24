@@ -574,6 +574,9 @@ function check(objFile) {
     if(objFile.value == "") {
         alert("不能为空");
         return false;
+    } else if (!String(objFile.value).endWith(".codechess")){
+        alert("文件格式不正确");
+        return false;
     }
 
     console.log(objFile.value); // 文件字节数
@@ -586,11 +589,18 @@ function check(objFile) {
         reader.readAsText(files[0], "UTF-8");//读取文件 
         reader.onload = function(evt){ //读取完文件之后会回来这里
             var fileString = evt.target.result; // 读取文件内容
-            var fileJSON = $.parseJSON(fileString);
+            var fileJSON;
+            try{
+                fileJSON = $.parseJSON(fileString);
+            } catch (err) {
+                alert("文件异常");
+                return false;
+            }
             console.log(fileJSON);
             gameResult = null;
             gameResult = fileJSON;
             objects.Object.clearAll();
+            statusBarMap = {}
             status.innerHTML = "";
             for (var i = 0; i < gridX; i++){
                 for (var j = 0; j < gridY; j++){
@@ -602,10 +612,21 @@ function check(objFile) {
                     }
                 }
             }
-            updateObjects(0, 0);
+            // updateObjects(0, 0);
+            var evt = document.createEvent('HTMLEvents')
+            evt.initEvent('input', true, true)
+            $("#seekbar").get(0).dispatchEvent(evt);
+            seekBar.value = 0;
+            var evt2 = document.createEvent('HTMLEvents')
+            evt2.initEvent('click', true, true)
+            $("#seekbar").get(0).dispatchEvent(evt2);
         }
     }
 }
+
+String.prototype.endWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
 
 // export function updateFlyers(step, frameIndex) {
 //     if (step >= gameResult.totalSteps || step < 0 || (step == gameResult.totalSteps-1 && frameIndex != 0))
