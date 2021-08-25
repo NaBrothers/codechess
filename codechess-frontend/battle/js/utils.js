@@ -614,6 +614,7 @@ function check(objFile) {
                 }
             }
             // updateObjects(0, 0);
+            seekBar.max = gameResult.totalSteps - 1;
             var evt = document.createEvent('HTMLEvents')
             evt.initEvent('input', true, true)
             $("#seekbar").get(0).dispatchEvent(evt);
@@ -621,6 +622,10 @@ function check(objFile) {
             var evt2 = document.createEvent('HTMLEvents')
             evt2.initEvent('click', true, true)
             $("#seekbar").get(0).dispatchEvent(evt2);
+            if (playButton.value == "pause") {
+                playButton.setAttribute("class", "pause");
+                playButton.value = "play";
+            }
         }
     }
 }
