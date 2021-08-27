@@ -15,9 +15,16 @@
 			<img id="codechessImg" src="images/codechess.png" />
 				
 			<form class="form" onsubmit="return toValid()">
-				<input type="text" placeholder="Username" id="username">
-				<input type="password" placeholder="Password" id="password">
+				<input type="text" placeholder="Username" id="username" name="username">
+				<p></p>
+				<input type="password" placeholder="Password" id="password" name="password">
+				<p></p>
 				<button type="submit" id="login-button">Login</button>
+				<p></p>
+				<div>
+					<a class="lefta" href="http://1.116.208.91/codechess-frontend/login/register.html">Register</a>
+					<a class="righta">Forget</a>
+				</div>
 			</form>
 		</div>
 		
@@ -70,11 +77,11 @@
 					var jsonData = data;
 					if (jsonData.code == "00"){
 						alert("token:"+jsonData.data);
+						localStorage.setItem('Authorization', jsonData.data);
 					}else if (jsonData.code == "99"){
 						alert(jsonData.msg);
 					}
 				},
-
 			});
 			return false;
 		} else {

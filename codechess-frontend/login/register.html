@@ -1,0 +1,133 @@
+﻿<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>>Welcome to CodeChess</title>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+<div class="htmleaf-container">
+	<div class="wrapper">
+		<div class="container">
+			
+			<img id="codechessImg" src="images/codechess.png" />
+				
+			<form class="form" onsubmit="return toValid()">
+				<input type="text" placeholder="Username" id="username" onchange="usernameCheck()">
+				<p id="usernameCheck"></p>
+				<input type="password" placeholder="Password" id="password" onchange="passwordCheck();passwordRepeatCheck()">
+				<p id="passwordCheck"></p>
+				<input type="password" placeholder="RepeatPassword" id="repeatPassword" onchange="passwordRepeatCheck()">
+				<p id="passwordRepeatCheck"></p>
+				<button type="submit" id="register-button">Register</button>
+				<p></p>
+				<div>
+					<a href="http://1.116.208.91/codechess-frontend/login/login.html">Have an account?Sign in</a></div>
+			</form>
+		</div>
+		
+		<ul class="bg-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.md5.js"></script>
+<script>
+// $('#login-button').click(function (event) {
+// 	event.preventDefault();
+// 	$('form').fadeOut(500);
+// 	$('.wrapper').addClass('form-success');
+// });
+	var mark = 1;
+	function usernameCheck(){
+		var res = /.{3}/;
+		var username = $('#username').val();
+		if (!res.test(username)){
+			document.getElementById("usernameCheck").innerHTML = "Your username is too short";
+			mark = 0;
+		}else{
+			document.getElementById("usernameCheck").innerHTML = "";
+			mark = 1;
+		}
+	}
+	function passwordCheck(){
+		var res = /.{3}/;
+		var password = $('#password').val();
+		if (!res.test(password)){
+			document.getElementById("passwordCheck").innerHTML = "Your password is too short";
+			mark = 0;
+		}else{
+			document.getElementById("passwordCheck").innerHTML = "";
+			mark = 1;
+		}
+	}
+	function passwordRepeatCheck(){
+		var res = /.{3}/;
+		var password = $('#password').val();
+		var repeatPassword = $('#repeatPassword').val();
+		if (password != repeatPassword){
+			document.getElementById("passwordRepeatCheck").innerHTML = "Passwords do not match";
+			mark = 0;
+		}else{
+			document.getElementById("passwordRepeatCheck").innerHTML = "";
+			mark = 1;
+		}
+	}
+	function toValid(){
+		var username = $('#username').val();
+		var password = $('#password').val();
+		var repeatPassword = $('#repeatPassword').val();
+		var res = /.{3}/;
+		if (mark == 1){
+			var pwd = $.md5(password);
+			console.log(JSON.stringify({
+					"username": username,
+					"password": pwd
+				}));
+			$.ajax({
+				url: "http://1.116.208.91/api/auth/register",
+				contentType: "application/json",
+				headers: {
+					Accept: "application/json"
+				},
+				data: JSON.stringify({
+					"username": username,
+					"password": pwd
+				}),
+				type: "POST",
+				success: (data) => {
+					var jsonData = data;
+					if (jsonData.code == "00"){
+						alert("token:"+jsonData.data);   
+						// window.location.replace("localhost:5500/codechess-frontend/login/login.html");
+						$(location).attr('href', "http://1.116.208.91/codechess-frontend/login/login.html");
+					}else if (jsonData.code == "99"){
+						alert(jsonData.msg);
+					}
+				},
+
+			});
+			return false;
+		} else {
+			return false;
+		}
+	}
+</script>
+
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';color:#000000">
+</div>
+</body>
+</html>
