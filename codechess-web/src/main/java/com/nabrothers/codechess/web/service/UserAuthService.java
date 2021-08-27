@@ -19,11 +19,19 @@ public class UserAuthService {
 
     private Map<Long, String> tokenMap = new HashMap<>();
 
-    public Long login(UserAuthDTO userAuthDTO) {
+    public Long query(UserAuthDTO userAuthDTO) {
         UserAuthPO userAuthPO = userAuthDAO.query(userAuthDTO);
         if (userAuthPO == null) {
             return null;
         }
+        return userAuthPO.getId();
+    }
+
+    public Long insert(UserAuthDTO userAuthDTO) {
+        UserAuthPO userAuthPO = new UserAuthPO();
+        userAuthPO.setUsername(userAuthDTO.getUsername());
+        userAuthPO.setPassword(userAuthDTO.getPassword());
+        userAuthDAO.insert(userAuthPO);
         return userAuthPO.getId();
     }
 

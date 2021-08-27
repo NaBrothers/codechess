@@ -7,7 +7,7 @@
         `UserAuth`
         (
          `username`,
-         `password`,
+         `password`
          )
         VALUES
         (
@@ -19,7 +19,16 @@
     <select id="query" parameterType="com.nabrothers.codechess.web.dto.UserAuthDTO" resultType="com.nabrothers.codechess.web.po.UserAuthPO">
         SELECT * FROM
         `UserAuth`
-        WHERE username = #{username} and password = #{password}
+        WHERE 1=1
+        <if test="id != null">
+            AND `id`=#{id}
+        </if>
+        <if test="username != null">
+            AND `username`=#{username}
+        </if>
+        <if test="password != null">
+            AND `password`=#{password}
+        </if>
     </select>
 
     <update id="update" parameterType="com.nabrothers.codechess.web.po.UserAuthPO">
