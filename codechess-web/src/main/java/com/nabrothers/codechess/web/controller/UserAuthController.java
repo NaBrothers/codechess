@@ -21,13 +21,29 @@ public class UserAuthController {
     @ResponseBody
     public HttpResponse<String> login(@RequestBody UserAuthDTO userAuthDTO) {
         HttpResponse<String> response = new HttpResponse<>();
-        Long userId = authService.login(userAuthDTO);
+        Long userId = authService.query(userAuthDTO);
         if (userId == null) {
             response.setCode(HttpResponse.SYSTEM_FAILURE_CODE);
             response.setMsg("用户名或密码错误！");
             return response;
         }
         response.setData(authService.getToken(userId));
+        return response;
+    }
+
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResponse<Long> register(@RequestBody UserAuthDTO userAuthDTO) {
+        HttpResponse<Long> response = new HttpResponse<>();
+        UserAuthDTO user = new UserAuthDTO();
+        user.setUsername(userAuthDTO.getUsername());
+        Long userId = authService.query(user);
+        if (userId != null) {
+            response.setCode(HttpResponse.SYSTEM_FAILURE_CODE);
+            response.setMsg("该用户名已经被注册！");
+            return response;
+        }
+        response.setData(authService.insert(userAuthDTO));
         return response;
     }
 }
