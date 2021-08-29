@@ -77,7 +77,8 @@
 					var jsonData = data;
 					if (jsonData.code == "00"){
 						alert("token:"+jsonData.data);
-						localStorage.setItem('Authorization', jsonData.data);
+						// localStorage.setItem('Authorization', jsonData.data);
+						$(location).attr('href', "/battle/battle.html");
 					}else if (jsonData.code == "99"){
 						alert(jsonData.msg);
 					}
