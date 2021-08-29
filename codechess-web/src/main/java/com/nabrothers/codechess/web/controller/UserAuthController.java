@@ -4,12 +4,15 @@ import com.nabrothers.codechess.web.dto.HttpResponse;
 import com.nabrothers.codechess.web.dto.UserAuthDTO;
 import com.nabrothers.codechess.web.po.UserAuthPO;
 import com.nabrothers.codechess.web.service.UserAuthService;
+import com.nabrothers.codechess.web.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -19,7 +22,7 @@ public class UserAuthController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResponse<String> login(@RequestBody UserAuthDTO userAuthDTO) {
+    public HttpResponse<String> login(@RequestBody UserAuthDTO userAuthDTO, HttpServletResponse servletResponse) {
         HttpResponse<String> response = new HttpResponse<>();
         Long userId = authService.query(userAuthDTO);
         if (userId == null) {
@@ -27,7 +30,9 @@ public class UserAuthController {
             response.setMsg("用户名或密码错误！");
             return response;
         }
+        String token = authService.getToken(userId);
         response.setData(authService.getToken(userId));
+        CookieUtils.addCookie(servletResponse, "authority", token, "codechess.online", false, 24 * 60 * 60, "/", false);
         return response;
     }
 
