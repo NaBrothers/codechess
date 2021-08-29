@@ -24,7 +24,7 @@
 				<button type="submit" id="register-button">Register</button>
 				<p></p>
 				<div>
-					<a href="http://1.116.208.91/codechess-frontend/login/login.html">Have an account?Sign in</a></div>
+					<a href="/login/login.html">Have an account?Sign in</a></div>
 			</form>
 		</div>
 		
@@ -113,7 +113,7 @@
 					if (jsonData.code == "00"){
 						alert("token:"+jsonData.data);   
 						// window.location.replace("localhost:5500/codechess-frontend/login/login.html");
-						$(location).attr('href', "http://1.116.208.91/codechess-frontend/login/login.html");
+						$(location).attr('href', "/login/login.html");
 					}else if (jsonData.code == "99"){
 						alert(jsonData.msg);
 					}
