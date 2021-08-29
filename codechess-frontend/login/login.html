@@ -73,6 +73,10 @@
 					"password": pwd
 				}),
 				type: "POST",
+				xhrFields: {
+					withCredentials: true,
+				},
+				crossDomain: true,
 				success: (data) => {
 					var jsonData = data;
 					if (jsonData.code == "00"){
