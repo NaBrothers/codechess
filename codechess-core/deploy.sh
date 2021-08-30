@@ -10,7 +10,6 @@ kill -9 $pid
 
 echo "开始编译源代码..."
 mvn clean package
-cp -r ../codechess-frontend/* ./target/codechess-core/src/main/webapp
 echo "源代码编译成功！"
 
 echo "开始启动新进程..."

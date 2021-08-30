@@ -32,7 +32,7 @@ public class UserAuthController {
         }
         String token = authService.getToken(userId);
         response.setData(authService.getToken(userId));
-        CookieUtils.addCookie(servletResponse, "authority", token, "codechess.online", false, 24 * 60 * 60, "/", false);
+        CookieUtils.addCookie(servletResponse, "authority", token, "1.116.208.91", false, 24 * 60 * 60, "/", false);
         return response;
     }
 
