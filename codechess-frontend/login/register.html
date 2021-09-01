@@ -21,6 +21,8 @@
 				<p id="passwordCheck"></p>
 				<input type="password" placeholder="RepeatPassword" id="repeatPassword">
 				<p id="passwordRepeatCheck"></p>
+				<input type="text" placeholder="ReferenceCode" id="referenceCode">
+				<p id="referenceCodeCheck"></p>
 				<button type="submit" id="register-button">Register</button>
 				<p></p>
 				<div>
@@ -83,10 +85,26 @@
 			mark = 1;
 		}
 	}
+	function referenceCodeCheck(){
+		var res = /^[\s\S]*.*[^\s][\s\S]*$/;
+		var referenceCode = $('#referenceCode').val();
+		if (!res.test(referenceCode)){
+			document.getElementById("referenceCodeCheck").innerHTML = "Please enter reference code";
+			mark = 0;
+		}else{
+			document.getElementById("referenceCodeCheck").innerHTML = "";
+			mark = 1;
+		}
+	}
 	function toValid(){
+		usernameCheck();
+		passwordCheck();
+		passwordRepeatCheck();
+		referenceCodeCheck();
 		var username = $('#username').val();
 		var password = $('#password').val();
 		var repeatPassword = $('#repeatPassword').val();
+		var referenceCode = $('#referenceCode').val();
 		var res = /.{3}/;
 		if (mark == 1){
 			var pwd = $.md5(password);
@@ -97,7 +115,8 @@
 			httpRequest("api/auth/register", 
 				{
 					"username": username,
-					"password": pwd
+					"password": pwd,
+					"referencecode": referenceCode
 				},
 				(data) => {
 					var jsonData = data;
@@ -146,6 +165,7 @@
 	document.getElementById("username").onchange = () => {usernameCheck();}
 	document.getElementById("password").onchange = () => {passwordCheck();passwordRepeatCheck();}
 	document.getElementById("repeatPassword").onchange = () => {passwordRepeatCheck();}
+	document.getElementById("referenceCode").onchange = () => {referenceCodeCheck();}
 	document.getElementsByClassName("form")[0].onsubmit = () => {return toValid();}
 
 
