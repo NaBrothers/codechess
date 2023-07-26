@@ -17,7 +17,7 @@ const monsterImgPath = "images/monster.png"
 
 // const gameUrl = "http://codechess.online:8081/battle";
 // const gameUrl = "localhost:8081/battle";
-const gameUrl = "http://1.116.208.91:8081/battle"
+const gameUrl = "http://43.142.252.227:8081/battle"
 
 const redHaloImgPath = "images/halo_red.png"
 const blueHaloImgPath = "images/halo_blue.png"

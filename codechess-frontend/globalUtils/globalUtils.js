@@ -1,5 +1,5 @@
 
-var rootUrl = "http://1.116.208.91/";
+var rootUrl = "http://43.142.252.227/";
 var loginUrl = "login/login.html";
 
 export {rootUrl, loginUrl};
